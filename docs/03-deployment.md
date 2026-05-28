@@ -92,11 +92,8 @@ FILES=(
     "includes/site-footer.php"
     "includes/site-drawer.php"
     "admin/..."
-    "templates/..."
     "assets/css/site.css"
-    "assets/css/presell.css"
     "assets/js/header.js"
-    "assets/js/presell.js"
     "pages/br/home.php"
     "pages/br/sobre.php"
     # ...

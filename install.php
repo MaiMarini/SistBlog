@@ -89,7 +89,7 @@ try {
 </head>
 <body>
     <div class="container">
-        <h1>🔧 Instalação do Sistema Presell</h1>
+        <h1>🔧 Instalação do Kallme</h1>
         <?php foreach ($messages as $msg): ?>
             <?php if (empty($msg)) continue; ?>
             <?php

@@ -28,7 +28,7 @@ URL                                  →  O que acontece
 /br/divulgacao-afiliados             →  pages/br/divulgacao-afiliados.php
 /br/<categoria>                      →  Listagem de categoria (se a cat. existe e tem artigos)
 /br/<categoria>/<artigo>             →  Artigo no banco WHERE category=cat AND slug=art
-/br/<slug-presell>                   →  Página presell no banco (sem categoria)
+/br/<slug-pagina>                    →  Página estática ou artigo no banco (sem categoria)
 /br/<qualquer-outro>                 →  pages/br/404.php (404)
 
 /en/*                                →  Mesmo fluxo com pages/en/ (vazio por enquanto)
@@ -77,10 +77,10 @@ RewriteRule ^(.+)$ /br/$1 [R=301,L]
 ```
 
 `renderDbPage($page, $lang, $category)` escolhe o template:
-- `page_type='article'` → `templates/article.php` (a criar na fase de artigos)
-- `page_type='presell'` → `templates/<page.template>.php` (structured/advertorial/blog-personal/landing)
-- `page_type='static'` → `templates/static.php` (fallback)
-- Default: cai em `templates/advertorial.php`
+- `page_type='article'` → `templates/article.php` (a criar — sistema editorial de blocos modulares)
+- `page_type='static'` → `templates/static.php` (a criar)
+
+Se o arquivo de template ainda não existir (estado atual, pós-cleanup), o router cai num placeholder neutro ("sistema editorial em construção").
 
 ---
 
@@ -109,22 +109,29 @@ function getDB(): PDO { /* singleton */ }
 | password | VARCHAR(255) | bcrypt (`password_hash`) |
 | created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP |
 
-### Tabela `pages` — Schema atual
+### Tabela `pages` — Schema editorial (19 colunas)
 
-Os campos editoriais (page_type, category, excerpt, featured_image, reading_time) coexistem com os campos legados de presell (template structured, advertorial, etc.).
-
-#### Identificação e i18n
+Após a remoção do sistema presell, a tabela tem só campos universais (identificação, i18n, metadados editoriais e SEO).
 
 | Campo | Tipo | Default | Uso |
 |-------|------|---------|-----|
 | `id` | INT AUTO_INCREMENT PK | — | |
-| `title` | VARCHAR(255) | — | Título |
-| `subtitle` | VARCHAR(255) | '' | Subtítulo |
+| `title` | VARCHAR(255) | — | Título principal |
 | `slug` | VARCHAR(255) | — | URL (`/lang/slug` ou `/lang/cat/slug`) |
-| `language` | VARCHAR(5) | 'br' | 'br' \| 'en' |
-| `page_type` | VARCHAR(20) | 'presell' | 'article' \| 'presell' \| 'static' \| 'home' |
-| `category` | VARCHAR(100) | NULL | slug da categoria |
+| `content` | LONGTEXT | NULL | Corpo (HTML do Quill) |
 | `status` | ENUM('draft','published') | 'draft' | |
+| `language` | VARCHAR(5) | 'br' | 'br' \| 'en' |
+| `page_type` | ENUM('article','static') | 'static' | Tipo da página |
+| `category` | VARCHAR(100) | NULL | Slug da categoria |
+| `excerpt` | TEXT | NULL | Resumo curto para cards |
+| `featured_image` | VARCHAR(500) | '' | Imagem destacada |
+| `reading_time` | INT | NULL | Minutos (auto-calc para article) |
+| `author_name` | VARCHAR(100) | NULL | Nome do autor |
+| `publish_date` | DATE | NULL | Data de publicação editorial |
+| `template` | VARCHAR(30) | NULL | Hero variant (`hero-classic`, `hero-side`, `hero-minimal`) |
+| `meta_title` | VARCHAR(255) | '' | SEO |
+| `meta_description` | TEXT | NULL | SEO |
+| `tracking_code` | LONGTEXT | NULL | Tag injetada no `<head>` desta página |
 | `created_at` | TIMESTAMP | CURRENT_TIMESTAMP | |
 | `updated_at` | TIMESTAMP | ON UPDATE | |
 
@@ -132,70 +139,6 @@ Os campos editoriais (page_type, category, excerpt, featured_image, reading_time
 - `idx_lang_type_status (language, page_type, status)`
 - `idx_lang_category (language, category)`
 - `idx_slug_lang (slug, language)` — slug NÃO é único por si só
-
-#### Metadados editoriais
-
-| Campo | Tipo | Uso |
-|-------|------|-----|
-| `excerpt` | TEXT | Resumo curto para cards |
-| `featured_image` | VARCHAR(500) | Imagem destacada |
-| `reading_time` | INT | Minutos (auto-calculado para article) |
-| `meta_title` | VARCHAR(255) | SEO |
-| `meta_description` | TEXT | SEO |
-| `tracking_code` | LONGTEXT | Tag injetada no `<head>` desta página |
-
-#### Presell genérico
-
-| Campo | Default |
-|-------|---------|
-| `main_image` | '' |
-| `content` | LONGTEXT (HTML do Quill) |
-| `affiliate_link` | '' |
-| `cta_text` | 'Saiba Mais' |
-| `cta_color` | '#e85d04' |
-| `author_name` | 'Redação' |
-| `author_avatar` | '' |
-| `publish_date` | NULL |
-| `template` | 'advertorial' |
-| `comments_json` | NULL |
-
-#### Template Estruturado — Cabeçalho
-
-| Campo | Default |
-|-------|---------|
-| `header_bg_type` | 'solid' (`solid`/`linear`/`radial`) |
-| `header_bg_direction` | 'to bottom' |
-| `header_bg_color1/2/3` | gradient stops |
-| `header_text` | rich text (acima da imagem) |
-| `header_image` | '' |
-| `header_text_below` | rich text (abaixo da imagem) |
-
-#### Template Estruturado — Conteúdo 1
-
-| Campo |
-|-------|
-| `content1_text` (rich) |
-| `content1_image` |
-| `content1_bg_image` |
-| `content1_bg_color` |
-
-#### Template Estruturado — Conteúdo 2
-
-| Campo |
-|-------|
-| `content2_images_json` (até 5) |
-| `content2_text` (rich) |
-| `content2_cta_text`, `content2_cta_color`, `content2_cta_text_color` |
-| `content2_bg_image`, `content2_bg_color` |
-
-#### Template Estruturado — Rodapé
-
-| Campo |
-|-------|
-| `footer_bg_color` |
-| `footer_alerts` (rich) |
-| `footer_buttons_json` (3 botões `{text, link}`) |
-| `footer_btn_color`, `footer_btn_size` |
 
 ### Tabela `categories` (schema bilíngue novo)
 
@@ -267,7 +210,7 @@ CREATE TABLE settings (
 | `countPages()` | Stats (total/published/draft) |
 | `buildPageDataFromPost($post, $files, &$errors)` | Constrói `$data` para `savePage` a partir do form |
 | `e($value)` | `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')` |
-| `getTemplates()` | Lista de templates de presell |
+| `getTemplates()` | Lista de variantes de hero para artigos (`hero-classic`, `hero-side`, `hero-minimal`) |
 
 ### `includes/auth.php`
 
@@ -339,18 +282,6 @@ CREATE TABLE settings (
       → fecha </body></html>
 ```
 
-### Página presell (`/br/meu-produto`)
-
-```
-1. page-router.php: lang=br, slug=meu-produto
-2. Não há arquivo /pages/br/meu-produto.php
-3. Não é uma categoria
-4. Busca DB: SELECT * FROM pages WHERE slug='meu-produto' AND language='br' AND category IS NULL AND status='published'
-5. Encontra → renderDbPage($page, 'br', null)
-6. page_type='presell' → carrega templates/structured.php (ou o template salvo)
-7. Template renderiza HTML completo (não usa site-header/footer)
-```
-
 ### Artigo categorizado (`/br/croche/como-comecar`)
 
 ```
@@ -364,16 +295,8 @@ CREATE TABLE settings (
 
 ---
 
-## 👁 Fluxo de preview no admin
+## 👁 Preview no admin
 
-```
-1. /admin/page-form.php — botão "Visualizar" tem formaction="preview.php" formtarget="_blank"
-2. POST vai para admin/preview.php
-3. preview.php:
-   a. requireLogin()
-   b. Limpa uploads/preview/
-   c. Faz upload das imagens para uploads/preview/
-   d. buildPageDataFromPost($_POST, $_FILES)
-   e. require templates/<template>.php direto com $page = $data
-4. Nada é salvo no DB
-```
+O preview foi temporariamente removido junto com o sistema presell legado. Será reescrito quando o sistema editorial de blocos modulares estiver no ar.
+
+`admin/preview.php` mostra apenas um placeholder explicando o estado atual.

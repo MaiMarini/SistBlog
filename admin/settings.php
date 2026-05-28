@@ -102,7 +102,7 @@ loadAllSettings();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurações — Presell Manager</title>
+    <title>Configurações — Kallme Admin</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>admin/assets/admin.css">
     <style>
         /* Tabs */

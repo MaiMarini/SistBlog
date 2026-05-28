@@ -100,7 +100,7 @@ if ($category) {
     exit;
 }
 
-// 5c. Página no banco (sem categoria) — ex: presell sem prefixo de categoria
+// 5c. Página no banco (sem categoria)
 $pdo = getDB();
 $stmt = $pdo->prepare("
     SELECT * FROM pages
@@ -124,42 +124,47 @@ exit;
 // ============================================================
 
 /**
- * Renderiza uma página vinda do DB usando o template apropriado.
+ * Renderiza uma página vinda do banco usando o template apropriado.
  *
- *   page_type = 'article'   → templates/article.php (se existir; senão usa o `template` field)
- *   page_type = 'presell'   → templates/<page.template>.php (advertorial, structured, etc.)
- *   page_type = 'static'    → templates/static.php (se existir; senão fallback)
- *   page_type = 'home'      → não esperado aqui (homepage vem de arquivo PHP)
+ *   page_type = 'article' → templates/article.php (sistema de blocos modulares)
+ *   page_type = 'static'  → templates/static.php
+ *
+ * Se o arquivo de template ainda não existir (sistema editorial em
+ * construção), mostra um placeholder neutro em vez de quebrar.
  *
  * @param array       $page     Linha da tabela `pages`.
  * @param string      $lang     Idioma corrente.
  * @param array|null  $category Categoria (se a página pertence a uma).
  */
 function renderDbPage(array $page, string $lang, ?array $category): void {
-    // Variáveis padrão expostas aos templates
-    $comments = !empty($page['comments_json']) ? (json_decode($page['comments_json'], true) ?: []) : [];
-
     $metaTitle = !empty($page['meta_title']) ? $page['meta_title'] : $page['title'];
     $metaDescription = !empty($page['meta_description'])
         ? $page['meta_description']
         : mb_substr(strip_tags($page['content'] ?? ''), 0, 160);
 
-    // Resolve qual template usar
-    $pageType = $page['page_type'] ?? 'presell';
-    $templateName = match ($pageType) {
-        'article' => 'article',
-        'static'  => 'static',
-        default   => ($page['template'] ?: 'advertorial'),  // presell e demais
-    };
+    // Resolve o template a partir de page_type
+    $pageType = $page['page_type'] ?? 'static';
+    $templateName = $pageType === 'article' ? 'article' : 'static';
 
     $templateFile = __DIR__ . '/templates/' . $templateName . '.php';
     if (!file_exists($templateFile)) {
-        // Fallbacks razoáveis
-        $templateFile = __DIR__ . '/templates/advertorial.php';
+        // Sistema editorial novo ainda em construção — placeholder neutro.
+        renderTemplateMissingPlaceholder($page, $lang);
+        return;
     }
 
-    // $page, $comments, $metaTitle, $metaDescription, $lang, $category ficam disponíveis
+    // $page, $metaTitle, $metaDescription, $lang, $category ficam disponíveis
     require $templateFile;
+}
+
+/**
+ * Placeholder enquanto templates/article.php ou templates/static.php ainda
+ * não foram criados (após a remoção do sistema presell legado).
+ */
+function renderTemplateMissingPlaceholder(array $page, string $lang): void {
+    $title = htmlspecialchars($page['title'] ?? 'Página', ENT_QUOTES, 'UTF-8');
+    $body  = $page['content'] ?? '<p>Conteúdo desta página será publicado em breve.</p>';
+    echo render404Html($title, 'Sistema editorial em construção.', $lang, 200);
 }
 
 /**

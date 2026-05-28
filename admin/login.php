@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="login-box">
         <div class="logo-icon">📄</div>
-        <h1>Presell Manager</h1>
+        <h1>Kallme Admin</h1>
         <p class="subtitle">Faça login para acessar o painel</p>
 
         <?php if ($error): ?>

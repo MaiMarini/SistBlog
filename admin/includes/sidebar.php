@@ -17,7 +17,7 @@ $activePage = $activePage ?? '';
 ?>
 <aside class="sidebar">
     <div class="sidebar-header">
-        <h2>📄 Presell Manager</h2>
+        <h2>📄 Kallme Admin</h2>
     </div>
     <nav class="sidebar-nav">
         <a href="<?= BASE_URL ?>admin/" class="nav-item <?= $activePage === 'dashboard' ? 'active' : '' ?>">

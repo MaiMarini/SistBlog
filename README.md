@@ -1,13 +1,15 @@
-# Kallme — Blog editorial bilíngue + Sistema de Presell
+# Kallme — Blog editorial bilíngue
 
-Plataforma editorial em PHP/MySQL que combina **blog público bilíngue** (BR/EN, foco editorial em crochê, jardinagem, DIY e livros) com um **sistema de presell pages dinâmicas** para afiliados. Hospedado em **kallme.online** (HostGator).
+Plataforma editorial em PHP/MySQL para um **blog público bilíngue** (BR/EN) sobre crochê, jardinagem, DIY e livros, hospedado em **kallme.online** (HostGator).
+
+> O projeto começou como um sistema de presell pages para afiliados; em maio/2026 todo o legado presell foi removido e o foco passou a ser 100% editorial. O sistema de blocos modulares de artigo será adicionado na próxima fase.
 
 ---
 
 ## 🚀 O que o projeto faz hoje
 
 ### Lado público (blog)
-1. **Roteamento bilíngue** — `/br/...` / `/en/...` (EN preparado, conteúdo na Fase futura)
+1. **Roteamento bilíngue** — `/br/...` / `/en/...` (EN preparado, conteúdo na fase futura)
 2. **Homepage com hero banner** (imagem horizontal + "Kallme" sobreposto) + grid de últimos artigos
 3. **7 páginas estáticas BR** (home, sobre, contato, política de privacidade, termos, divulgação de afiliados, 404)
 4. **Header horizontal sticky** rosa pétala (estilo Charlotte) com hambúrguer + nav + Pinterest + busca
@@ -16,14 +18,13 @@ Plataforma editorial em PHP/MySQL que combina **blog público bilíngue** (BR/EN
 7. **Ícones**: Phosphor Icons (peso `light` no conteúdo, `regular` no header)
 8. **Favicons completos** + PWA manifest
 
-### Lado afiliado (presell)
-1. **Painel admin restrito** (`/admin/`) — criar/editar/publicar/excluir páginas presell
-2. **4 templates de presell** — Estruturado (4 seções), Advertorial, Blog Pessoal, Landing Page
-3. **Editor Quill** (rich text) com 19 fontes, tamanhos por px, cor HEX
-4. **Preview** antes de publicar (abre em nova aba sem salvar)
-5. **Botão flutuante CTA** que segue a rolagem
-6. **Tag de rastreamento** por página (Google Ads, Pixel, Analytics)
-7. **Trackings globais** configuráveis em `/admin/settings.php`
+### Lado admin (`/admin/`)
+1. **Painel restrito** com login + sessão + CSRF
+2. **Dashboard** com contagem de páginas
+3. **CRUD de páginas** (versão transitória — formulário de blocos modulares chega em breve)
+4. **Configurações globais** em 4 abas: Geral, Tracking Global, Redes Sociais, SEO
+5. **Editor Quill** rich text no campo de conteúdo
+6. **Sistema de categorias** bilíngue com 1h de cache
 
 ### Infraestrutura
 1. **Deploy via HTTP POST** (FTP da HostGator tem cache de filesystem; HTTP escreve via PHP)
@@ -38,22 +39,22 @@ Plataforma editorial em PHP/MySQL que combina **blog público bilíngue** (BR/EN
 kallme.online/
 ├── .htaccess                          # Roteamento bilíngue (mod_rewrite)
 ├── index.php                          # Fallback 301 → /br/
-├── page.php                           # LEGADO (não usado pelo router)
 ├── page-router.php                    # Router principal: lang/slug/categoria
-├── install.php                        # Endpoint de DEPLOY HTTP POST
+├── install.php                        # Instalador original (sobrescrito por endpoint de DEPLOY no servidor)
 ├── migrate.php                        # Migrações idempotentes do banco
-├── deploy.sh                          # Script de deploy local → servidor
+├── deploy.sh                          # Script de deploy local → servidor (gitignored)
 ├── site.webmanifest                   # PWA manifest
-├── favicon.ico, favicon.svg, ...      # Favicons na raiz
+├── favicon.ico, favicon.svg, ...      # Favicons na raiz (subir manualmente no servidor)
 │
 ├── config/
-│   └── database.php                   # PDO singleton, BASE_URL
+│   ├── database.php                   # PDO + DEPLOY_KEY/MIGRATE_KEY (gitignored)
+│   └── database.example.php           # Template (vai pro git)
 │
 ├── includes/
 │   ├── auth.php                       # Login, sessão, CSRF
-│   ├── functions.php                  # CRUD de páginas, slugify, e()
+│   ├── functions.php                  # CRUD de páginas + helpers básicos
 │   ├── settings.php                   # Settings globais (cache em memória)
-│   ├── categories.php                 # Categorias + cache de 1h + render de ícones
+│   ├── categories.php                 # Categorias + cache 1h + render de ícones
 │   ├── site-helpers.php               # url(), getCategory(), formatDate()...
 │   ├── site-header.php                # Header HTML (head + body open + sticky)
 │   ├── site-drawer.php                # Drawer lateral
@@ -63,23 +64,17 @@ kallme.online/
 │   ├── index.php                      # Dashboard
 │   ├── login.php / logout.php
 │   ├── pages.php                      # Lista de páginas
-│   ├── page-form.php                  # CRUD (Quill, upload, preview)
+│   ├── page-form.php                  # CRUD (versão transitória editorial)
 │   ├── page-delete.php
-│   ├── preview.php                    # Renderiza preview sem salvar
+│   ├── preview.php                    # Placeholder (preview reescrito junto com blocos modulares)
 │   ├── settings.php                   # 4 abas: Geral/Tracking/Social/SEO
-│   ├── includes/sidebar.php           # Sidebar do admin (reutilizável)
+│   ├── includes/sidebar.php           # Sidebar do admin
 │   └── assets/
 │       ├── admin.css                  # Tema dark do painel
-│       └── admin.js                   # Slug auto, Quill helpers
-│
-├── templates/                         # Templates de PRESELL (não-blog)
-│   ├── structured.php                 # 4 seções customizáveis (padrão)
-│   ├── advertorial.php                # Estilo notícia
-│   ├── blog-personal.php              # Estilo depoimento
-│   └── landing.php                    # Estilo comercial
+│       └── admin.js
 │
 ├── pages/
-│   ├── br/                            # Páginas estáticas BR (incluem site-header/footer)
+│   ├── br/                            # Páginas estáticas BR
 │   │   ├── home.php                   # Hero banner + grid de artigos
 │   │   ├── sobre.php                  # Conteúdo editorial real
 │   │   ├── contato.php
@@ -87,31 +82,30 @@ kallme.online/
 │   │   ├── termos.php
 │   │   ├── divulgacao-afiliados.php
 │   │   └── 404.php
-│   └── en/                            # Vazio (preparado para Fase EN)
+│   └── en/                            # Preparado para Fase EN (vazio)
 │
 ├── assets/
 │   ├── css/
-│   │   ├── site.css                   # Design system + blog público
-│   │   └── presell.css                # CSS legado das presells (não mexer)
+│   │   └── site.css                   # Design system + blog público
 │   ├── js/
-│   │   ├── header.js                  # Drawer + busca placeholder
-│   │   └── presell.js                 # Floating CTA das presells
+│   │   └── header.js                  # Drawer + busca placeholder
 │   └── img/
-│       ├── logo-icon.png              # Logo da sidebar (drawer)
-│       ├── logo-full.png              # Logo do footer
+│       ├── logo-icon.png              # Logo do drawer (subir no servidor)
+│       ├── logo-full.png              # Logo do footer (subir no servidor)
 │       └── hero-banner.jpg            # Imagem horizontal da homepage
 │
-├── uploads/                           # Imagens enviadas pelo admin
+├── uploads/                           # Imagens enviadas pelo admin (gitignored)
 │
 └── docs/
     ├── 01-design-system.md            # Paleta Sereno Romântico, tipografia, espaçamentos
     ├── 02-architecture.md             # Roteamento bilíngue, schema, fluxos
     ├── 03-deployment.md               # Deploy via HTTP POST, troubleshooting
     ├── 04-admin-guide.md              # Como usar o painel
-    ├── 05-templates.md                # Templates de presell
     ├── 06-blog-frontend.md            # Páginas estáticas, header/drawer/footer
     └── 07-categorias.md               # Sistema de categorias do blog
 ```
+
+> **Nota**: a pasta `templates/` foi removida junto com o sistema presell. Será recriada quando o sistema editorial de blocos modulares for implementado (com `templates/article.php` e `templates/static.php`).
 
 ---
 
@@ -119,11 +113,10 @@ kallme.online/
 
 | Arquivo | Conteúdo |
 |---------|----------|
-| [docs/01-design-system.md](docs/01-design-system.md) | Paleta "Sereno Romântico", tipografia (Playfair + Inter), espaçamentos, botões, cards |
+| [docs/01-design-system.md](docs/01-design-system.md) | Paleta "Sereno Romântico", tipografia (Playfair + Inter), espaçamentos, botões, cards, ícones |
 | [docs/02-architecture.md](docs/02-architecture.md) | Roteamento bilíngue, schema do banco, fluxos de requisição |
 | [docs/03-deployment.md](docs/03-deployment.md) | Como funciona o deploy via HTTP POST, migrações, troubleshooting |
-| [docs/04-admin-guide.md](docs/04-admin-guide.md) | Como usar o painel: páginas, settings, tracking, preview |
-| [docs/05-templates.md](docs/05-templates.md) | Os 4 templates de presell e quais campos cada um usa |
+| [docs/04-admin-guide.md](docs/04-admin-guide.md) | Como usar o painel admin |
 | [docs/06-blog-frontend.md](docs/06-blog-frontend.md) | Header/drawer/footer compartilhados, páginas estáticas, hero banner |
 | [docs/07-categorias.md](docs/07-categorias.md) | Tabela `categories`, cache, drawer dinâmico, `renderCategoryIcon` |
 
@@ -173,19 +166,30 @@ kallme.online/
 
 4 tabelas:
 - **`users`** — login do admin
-- **`pages`** — presells + (futuramente) artigos editoriais
+- **`pages`** — páginas estáticas e artigos editoriais (19 colunas, schema editorial enxuto)
 - **`categories`** — bilíngue (name_br/name_en) com is_active + display_order
 - **`settings`** — chaves globais (tracking, social, seo, general)
 
 Detalhe completo em [docs/02-architecture.md](docs/02-architecture.md).
+
+### `page_type` (ENUM)
+- `'article'` — artigo editorial (a renderização de bloco será implementada na próxima fase)
+- `'static'` — página estática institucional
 
 ---
 
 ## ⚠️ Notas importantes
 
 - O arquivo `install.php` no servidor é o **endpoint de DEPLOY** (não o instalador original). Não substituir.
-- `page.php` é **legado** — o router principal é `page-router.php`.
 - Pasta `uploads/` é populada pelo painel; faça backup periódico.
 - Schema do banco evolui via `migrate.php` — **idempotente**, pode rodar várias vezes.
-- O footer do projeto antigo (logo Maíra Marini Ateliê) precisa de `assets/img/logo-full.png` (já configurado, basta subir o arquivo).
-- A homepage usa `assets/img/hero-banner.jpg` como fundo do hero — fallback rosa pétala se o arquivo não existir.
+- O footer usa `assets/img/logo-full.png` (subir no servidor) — fallback de texto se ausente.
+- A homepage usa `assets/img/hero-banner.jpg` — fallback rosa pétala se ausente.
+
+---
+
+## 🧭 Roadmap
+
+- **Fase atual**: limpeza pós-presell concluída. CRUD básico de páginas funciona em modo transitório.
+- **Próxima fase**: sistema de blocos modulares de artigo (`templates/article.php` + editor visual no admin).
+- **Depois**: páginas de categoria (`pages/<lang>/_category.php`), listagem, busca, conteúdo EN.

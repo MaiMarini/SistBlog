@@ -1,39 +1,32 @@
 <?php
+/**
+ * ADMIN — PREVIEW (versão transitória)
+ *
+ * O preview de presell foi removido junto com os templates legados.
+ * Quando o sistema editorial de blocos for implementado, este preview
+ * será reescrito.
+ */
+
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 requireLogin();
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(400);
-    die('Acesso inválido. Esta página só pode ser acessada via formulário.');
-}
-
-// Processar POST/FILES (não salva no banco)
-$errors = [];
-$data = buildPageDataFromPost($_POST, $_FILES, $errors);
-
-// Montar $page como se viesse do banco
-$page = $data;
-
-// Preparar dados que o template espera
-$metaTitle = !empty($page['meta_title']) ? $page['meta_title'] : $page['title'];
-$metaDescription = !empty($page['meta_description'])
-    ? $page['meta_description']
-    : mb_substr(strip_tags($page['content'] ?? ''), 0, 160);
-
-$comments = json_decode($page['comments_json'] ?? '[]', true) ?: [];
-
-// Selecionar template
-$template = $page['template'] ?: 'structured';
-$templateFile = __DIR__ . '/../templates/' . $template . '.php';
-
-if (!file_exists($templateFile)) {
-    $templateFile = __DIR__ . '/../templates/structured.php';
-}
-
-// Banner de "Modo Preview" no topo
-echo '<div style="background:#e94560;color:#fff;padding:10px 20px;text-align:center;font-family:sans-serif;font-size:13px;font-weight:600;position:sticky;top:0;z-index:9999;">
-    👁️ MODO PREVIEW — Esta visualização NÃO foi salva. Volte e clique em "Atualizar Página" para salvar.
-</div>';
-
-require $templateFile;
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Preview indisponível — Kallme Admin</title>
+    <link rel="stylesheet" href="<?= BASE_URL ?>admin/assets/admin.css">
+</head>
+<body>
+    <div style="max-width: 520px; margin: 80px auto; padding: 0 24px; text-align: center; color: #e0e0e0;">
+        <h1 style="color:#e94560; font-size:24px; margin-bottom: 16px;">👁️ Preview em construção</h1>
+        <p style="font-size:15px; line-height:1.6; color:#aaa;">
+            O sistema editorial está sendo reconstruído. O preview voltará junto com o novo formulário de blocos modulares.
+        </p>
+        <p style="margin-top: 24px;">
+            <a href="javascript:history.back()" style="color:#e94560; text-decoration:none;">← Voltar ao editor</a>
+        </p>
+    </div>
+</body>
+</html>

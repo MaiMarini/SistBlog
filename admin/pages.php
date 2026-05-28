@@ -15,7 +15,7 @@ $activePage = 'pages';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Páginas - Presell Manager</title>
+    <title>Páginas - Kallme Admin</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>admin/assets/admin.css">
 </head>
 
@@ -25,7 +25,7 @@ $activePage = 'pages';
 
         <main class="main-content">
             <header class="content-header">
-                <h1>Páginas Presell</h1>
+                <h1>Páginas</h1>
                 <a href="<?= BASE_URL ?>admin/page-form.php" class="btn btn-primary">+ Nova Página</a>
             </header>
 

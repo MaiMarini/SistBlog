@@ -151,7 +151,7 @@ function getAllCategories(string $lang = KALLME_DEFAULT_LANG): array {
  * Filtros aceitos (todos opcionais):
  *   - language    string  (ex: 'br')
  *   - category    string  (slug da categoria)
- *   - page_type   string  ('article', 'presell', 'static', 'home')
+ *   - page_type   string  'article' | 'static'
  *   - limit       int     (LIMIT N)
  *
  * Ordena por data de publicação (publish_date OU created_at) desc.

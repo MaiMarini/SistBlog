@@ -1,6 +1,8 @@
 # Guia do Painel Admin — Kallme
 
-Como usar o painel para criar páginas presell, configurar tracking global e gerenciar o site.
+Como usar o painel para criar páginas estáticas e artigos, configurar tracking global e gerenciar o site.
+
+> O sistema de páginas está em **modo transitório** após a remoção do legado página. O formulário atual permite criar/editar páginas com campos básicos (title, slug, content, excerpt, featured_image, SEO). O sistema editorial completo com blocos modulares chega em breve.
 
 ---
 
@@ -95,7 +97,7 @@ Acesse via "+ Nova Página" ou clique em ✏️ na lista.
 - Meta Description
 
 #### 📊 Código de Rastreamento
-Tags específicas desta página (Google Ads, Pixel, Pinterest tag, etc.) — coladas no formato completo (`<script>...</script>` ou `<meta>`). Injetadas no `<head>` da presell.
+Tags específicas desta página (Google Ads, Pixel, Pinterest tag, etc.) — coladas no formato completo (`<script>...</script>` ou `<meta>`). Injetadas no `<head>` da página.
 
 > Trackings **globais** (que se aplicam em todas as páginas) ficam em `/admin/settings.php` aba **Tracking Global**.
 
@@ -209,7 +211,7 @@ Tela em **4 abas** (deep-link via hash: `#general`, `#tracking`, `#social`, `#se
 - Idioma padrão (br/en)
 
 ### Aba "📊 Tracking Global"
-Códigos que entram no `<head>` de **todas as páginas estáticas e artigos** (presells continuam com seu `tracking_code` próprio):
+Códigos que entram no `<head>` de **todas as páginas estáticas e artigos** (páginas continuam com seu `tracking_code` próprio):
 - Google Analytics 4 (gtag)
 - Google Ads (gtag)
 - Pinterest Tag
@@ -229,7 +231,7 @@ Meta descriptions padrão por idioma (usadas quando uma página não tem meta de
 
 ---
 
-## 🎯 Fluxo recomendado para criar uma presell
+## 🎯 Fluxo recomendado para criar uma página
 
 1. Crie em **Rascunho** primeiro
 2. Preencha tudo, faça upload das imagens

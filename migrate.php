@@ -1,24 +1,24 @@
 <?php
 /**
- * MIGRATIONS — Kallme
+ * MIGRATIONS — Kallme (Blog Editorial)
  *
  * Script idempotente que evolui o schema do banco.
  * Roda via HTTP: kallme.online/migrate.php?key=<MIGRATE_KEY de config/database.php>
  *
- * O que faz:
- *  1. Adiciona colunas novas à tabela `pages` (incluindo i18n, page_type, categoria, etc.)
- *  2. Cria a tabela `categories` com índice composto
- *  3. Cria os índices de performance na tabela `pages`
- *  4. Remove o índice UNIQUE legado em `slug` (substituído por composto slug+language)
- *  5. Faz seed das categorias padrão em BR
+ * O que faz (idempotente):
+ *  1. Garante colunas editoriais em `pages` (i18n, page_type, category, etc.)
+ *  2. Cria índices de performance
+ *  3. Cria tabela `categories` (schema bilíngue) + seed das 4 canônicas
+ *  4. Cria tabela `settings` + seed das 18 chaves padrão
  *
- * Idempotente — pode rodar quantas vezes precisar; só altera o que falta.
+ * NOTA: o sistema presell foi REMOVIDO no Cleanup. Este migrate.php não
+ * cria nem garante colunas presell. Se uma instalação antiga ainda tem
+ * essas colunas, elas continuam existindo (e devem ser removidas com
+ * um script de cleanup específico).
  */
 
 require_once __DIR__ . '/config/database.php';
 
-// Chave validada por constante definida em config/database.php (gitignored).
-// Se não estiver definida, o endpoint é desabilitado por padrão.
 if (!defined('MIGRATE_KEY')) {
     die('MIGRATE_KEY não configurada em config/database.php');
 }
@@ -29,57 +29,26 @@ if (($_GET['key'] ?? '') !== MIGRATE_KEY) {
 header('Content-Type: text/plain; charset=utf-8');
 
 // ============================================================
-// 1. COLUNAS DA TABELA `pages`
+// 1. COLUNAS EDITORIAIS DA TABELA `pages`
 // ============================================================
 $columns = [
-    // -- i18n / tipo / categoria / metadados editoriais (NOVOS)
     "language VARCHAR(5) DEFAULT 'br'",
-    "page_type VARCHAR(20) DEFAULT 'presell'",
+    "page_type ENUM('article','static') NOT NULL DEFAULT 'static'",
     "category VARCHAR(100) DEFAULT NULL",
     "excerpt TEXT DEFAULT NULL",
     "featured_image VARCHAR(500) DEFAULT ''",
     "reading_time INT DEFAULT NULL",
-
-    // -- Cabeçalho (template structured)
-    "header_bg_type VARCHAR(20) DEFAULT 'solid'",
-    "header_bg_direction VARCHAR(20) DEFAULT 'to bottom'",
-    "header_bg_color1 VARCHAR(7) DEFAULT '#ffffff'",
-    "header_bg_color2 VARCHAR(7) DEFAULT ''",
-    "header_bg_color3 VARCHAR(7) DEFAULT ''",
-    "header_text LONGTEXT",
-    "header_image VARCHAR(500) DEFAULT ''",
-    "header_text_below LONGTEXT",
-
-    // -- Conteúdo 1
-    "content1_text LONGTEXT",
-    "content1_image VARCHAR(500) DEFAULT ''",
-    "content1_bg_image VARCHAR(500) DEFAULT ''",
-    "content1_bg_color VARCHAR(7) DEFAULT '#ffffff'",
-
-    // -- Conteúdo 2
-    "content2_images_json LONGTEXT",
-    "content2_text LONGTEXT",
-    "content2_cta_text VARCHAR(100) DEFAULT 'Saiba Mais'",
-    "content2_cta_color VARCHAR(7) DEFAULT '#e85d04'",
-    "content2_cta_text_color VARCHAR(7) DEFAULT '#ffffff'",
-    "content2_bg_image VARCHAR(500) DEFAULT ''",
-    "content2_bg_color VARCHAR(7) DEFAULT '#f8f9fa'",
-
-    // -- Rodapé
-    "footer_bg_color VARCHAR(7) DEFAULT '#1a1a2e'",
-    "footer_alerts LONGTEXT",
-    "footer_buttons_json LONGTEXT",
-    "footer_btn_color VARCHAR(7) DEFAULT '#ffffff'",
-    "footer_btn_size VARCHAR(10) DEFAULT '13px'",
-
-    // -- Tracking
+    "author_name VARCHAR(100) DEFAULT NULL",
+    "publish_date DATE DEFAULT NULL",
+    "meta_title VARCHAR(255) DEFAULT ''",
+    "meta_description TEXT DEFAULT NULL",
     "tracking_code LONGTEXT",
+    "template VARCHAR(30) DEFAULT NULL", // hero variant (article)
 ];
 
 // ============================================================
-// 2. ÍNDICES DA TABELA `pages`
+// 2. ÍNDICES
 // ============================================================
-// Nome do índice → definição das colunas
 $indexes = [
     'idx_lang_type_status' => '(language, page_type, status)',
     'idx_lang_category'    => '(language, category)',
@@ -87,10 +56,8 @@ $indexes = [
 ];
 
 // ============================================================
-// 3. CATEGORIAS PADRÃO (schema bilíngue novo)
+// 3. CATEGORIAS PADRÃO (schema bilíngue)
 // ============================================================
-// [slug, name_br, name_en, description_br, icon_type, icon_value, display_order]
-// Costura foi REMOVIDA do escopo. "Minha estante" adicionada.
 $defaultCategories = [
     ['croche',        'Crochê',        'Crochet',
         'Receitas, tutoriais e recomendações pra quem ama crochê',
@@ -109,24 +76,23 @@ $defaultCategories = [
 // ============================================================
 // 4. SETTINGS PADRÃO
 // ============================================================
-// [setting_key, setting_group, setting_value, description]
 $defaultSettings = [
     // Group: general
-    ['site_name',          'general', 'Kallme',                                              'Nome do site (aparece em title e header)'],
-    ['site_tagline_br',    'general', 'Crochê, jardinagem e trabalhos manuais com você',    'Tagline em português'],
-    ['site_tagline_en',    'general', 'Crochet, gardening and crafts',                       'Tagline em inglês'],
+    ['site_name',          'general', 'Kallme',                                              'Nome do site'],
+    ['site_tagline_br',    'general', 'Crochê, jardinagem e trabalhos manuais com você',    'Tagline (BR)'],
+    ['site_tagline_en',    'general', 'Crochet, gardening and crafts',                       'Tagline (EN)'],
     ['contact_email',      'general', 'contato@kallme.online',                               'E-mail de contato'],
-    ['default_language',   'general', 'br',                                                  'Idioma padrão (br/en)'],
+    ['default_language',   'general', 'br',                                                  'Idioma padrão'],
 
-    // Group: tracking (códigos globais — injetados em todas as páginas)
-    ['tracking_global_ga4',        'tracking', '', 'Google Analytics 4 (cole o script completo gtag)'],
-    ['tracking_global_googleads',  'tracking', '', 'Google Ads (cole o script completo gtag)'],
-    ['tracking_global_pinterest',  'tracking', '', 'Pinterest Tag (script ou meta tag)'],
-    ['tracking_global_facebook',   'tracking', '', 'Facebook Pixel (script completo)'],
-    ['tracking_global_tiktok',     'tracking', '', 'TikTok Pixel (script completo)'],
-    ['tracking_global_custom',     'tracking', '', 'Qualquer outro código (Microsoft Clarity, Hotjar, etc.)'],
+    // Group: tracking (globais)
+    ['tracking_global_ga4',        'tracking', '', 'Google Analytics 4 (gtag)'],
+    ['tracking_global_googleads',  'tracking', '', 'Google Ads (gtag)'],
+    ['tracking_global_pinterest',  'tracking', '', 'Pinterest Tag'],
+    ['tracking_global_facebook',   'tracking', '', 'Facebook Pixel'],
+    ['tracking_global_tiktok',     'tracking', '', 'TikTok Pixel'],
+    ['tracking_global_custom',     'tracking', '', 'Outros (Clarity, Hotjar, etc.)'],
 
-    // Group: social (URLs das redes sociais)
+    // Group: social
     ['social_pinterest',  'social', '', 'URL do perfil Pinterest'],
     ['social_instagram',  'social', '', 'URL do perfil Instagram'],
     ['social_facebook',   'social', '', 'URL do perfil Facebook'],
@@ -143,8 +109,7 @@ $defaultSettings = [
 // ============================================================
 try {
     $pdo = getDB();
-
-    echo "=== MIGRAÇÃO KALLME ===\n\n";
+    echo "=== MIGRAÇÃO KALLME (BLOG EDITORIAL) ===\n\n";
 
     // ---------- 1. Colunas em `pages` ----------
     echo "--- Colunas em `pages` ---\n";
@@ -152,7 +117,6 @@ try {
     foreach ($pdo->query("SHOW COLUMNS FROM pages") as $row) {
         $existingColumns[$row['Field']] = true;
     }
-
     foreach ($columns as $columnDef) {
         $columnName = explode(' ', $columnDef)[0];
         if (isset($existingColumns[$columnName])) {
@@ -168,7 +132,6 @@ try {
     }
 
     // ---------- 2. Remover UNIQUE legado em `slug` ----------
-    // O sistema antigo tinha UNIQUE(slug). Agora a unicidade é por (slug, language).
     echo "\n--- Índice legado UNIQUE(slug) ---\n";
     $legacy = $pdo->query("SHOW INDEX FROM pages WHERE Key_name = 'slug' AND Non_unique = 0")->fetchAll();
     if (!empty($legacy)) {
@@ -176,19 +139,18 @@ try {
             $pdo->exec("ALTER TABLE pages DROP INDEX slug");
             echo "[  OK  ] UNIQUE(slug) removido\n";
         } catch (PDOException $e) {
-            echo "[ERROR] Falha ao remover UNIQUE(slug): " . $e->getMessage() . "\n";
+            echo "[ERROR] " . $e->getMessage() . "\n";
         }
     } else {
         echo "[ SKIP ] UNIQUE(slug) já não existe\n";
     }
 
-    // ---------- 3. Índices novos em `pages` ----------
+    // ---------- 3. Índices ----------
     echo "\n--- Índices em `pages` ---\n";
     $existingIndexes = [];
     foreach ($pdo->query("SHOW INDEX FROM pages") as $row) {
         $existingIndexes[$row['Key_name']] = true;
     }
-
     foreach ($indexes as $name => $cols) {
         if (isset($existingIndexes[$name])) {
             echo "[ SKIP ] $name (já existe)\n";
@@ -202,10 +164,7 @@ try {
         }
     }
 
-    // ---------- 4. Tabela `categories` (schema bilíngue novo) ----------
-    // O schema antigo tinha 1 linha por idioma (coluna `language`, `name`, `icon`).
-    // O novo tem 1 linha por categoria com colunas name_br/name_en + icon_type/icon_value.
-    // Detectamos pela presença da coluna `name_br`: se faltar, recriamos a tabela.
+    // ---------- 4. Tabela `categories` (schema bilíngue) ----------
     echo "\n--- Tabela `categories` ---\n";
     $catHasNewSchema = false;
     try {
@@ -236,9 +195,8 @@ try {
                 INDEX idx_active (is_active)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ");
-        echo "[  OK  ] Tabela `categories` recriada no schema bilíngue novo\n";
+        echo "[  OK  ] Tabela `categories` recriada (schema bilíngue)\n";
 
-        // ---------- 5. Seed das 4 categorias canônicas (sem Costura) ----------
         echo "\n--- Seed de categorias ---\n";
         $insert = $pdo->prepare("
             INSERT INTO categories
@@ -254,25 +212,7 @@ try {
         echo "[ SKIP ] `categories` já está no schema novo (preserva edições)\n";
     }
 
-    // ---------- 5b. Migração de page_type das páginas existentes ----------
-    // Páginas institucionais/legais → 'static'. Templates de presell → 'presell'.
-    // (No estado atual a tabela pages costuma estar vazia — as páginas
-    //  institucionais são arquivos PHP — então isto afeta 0 linhas.)
-    echo "\n--- Migração de page_type ---\n";
-    $staticSlugs = "'home','sobre','contato','politica-de-privacidade','termos','divulgacao-afiliados','404'";
-    $n1 = $pdo->exec("UPDATE pages SET page_type = 'static' WHERE slug IN ($staticSlugs)");
-    echo "[  OK  ] $n1 página(s) → page_type='static'\n";
-
-    $n2 = $pdo->exec("UPDATE pages SET page_type = 'presell'
-                      WHERE template IN ('advertorial','blog-personal','landing','structured','presell-A','presell-B','presell-C','presell-D')
-                        AND (page_type IS NULL OR page_type = '' OR page_type = 'presell')");
-    echo "[  OK  ] $n2 página(s) → page_type='presell'\n";
-
-    // ---------- 5c. Reatribui páginas de Costura para DIY ----------
-    $n3 = $pdo->exec("UPDATE pages SET category = 'diy' WHERE category = 'costura'");
-    echo "[  OK  ] $n3 página(s) movida(s) de costura → diy\n";
-
-    // ---------- 6. Tabela `settings` ----------
+    // ---------- 5. Tabela `settings` ----------
     echo "\n--- Tabela `settings` ---\n";
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS settings (
@@ -287,7 +227,7 @@ try {
     ");
     echo "[  OK  ] Tabela `settings` garantida\n";
 
-    // ---------- 7. Seed das settings padrão ----------
+    // ---------- 6. Seed das settings ----------
     echo "\n--- Seed de settings ---\n";
     $checkSet = $pdo->prepare("SELECT id FROM settings WHERE setting_key = ?");
     $insertSet = $pdo->prepare("
@@ -298,7 +238,7 @@ try {
         [$key, $group, $value, $description] = $row;
         $checkSet->execute([$key]);
         if ($checkSet->fetch()) {
-            echo "[ SKIP ] $key (já existe)\n";
+            echo "[ SKIP ] $key\n";
             continue;
         }
         try {
@@ -310,7 +250,6 @@ try {
     }
 
     echo "\n✅ Migração concluída!\n";
-    echo "⚠ Considere remover ou renomear este arquivo em produção após uso.\n";
 
 } catch (PDOException $e) {
     echo "Erro de banco: " . $e->getMessage();

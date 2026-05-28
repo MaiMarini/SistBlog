@@ -1,5 +1,5 @@
 // ============================================
-// PRESELL MANAGER - ADMIN SCRIPTS
+// KALLME ADMIN - ADMIN SCRIPTS
 // ============================================
 
 // Gerar slug a partir do título
