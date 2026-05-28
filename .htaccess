@@ -1,0 +1,45 @@
+# ============================================================
+# KALLME — Roteamento bilíngue (BR/EN)
+# ============================================================
+# Estratégia:
+#  1. Arquivos/diretórios reais são servidos diretamente pelo Apache.
+#  2. Paths "de sistema" (/admin, /assets, etc.) saem do rewrite.
+#  3. Acesso à raiz "/" é redirecionado 301 → /br/.
+#  4. Qualquer URL /br/... ou /en/... é encaminhada para page-router.php.
+#  5. Fallback: tudo que sobrar vai pra /br/ (cobre links antigos).
+# ============================================================
+
+RewriteEngine On
+
+# -----------------------------------------------------------
+# 1. Não mexer com arquivos e diretórios reais existentes
+# -----------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# -----------------------------------------------------------
+# 2. Não mexer com paths de sistema
+# -----------------------------------------------------------
+RewriteRule ^(admin|assets|uploads|config|includes|templates|pages)(/.*)?$ - [L,NC]
+RewriteRule ^(install|migrate)\.php$ - [L,NC]
+
+# -----------------------------------------------------------
+# 3. Redireciona a raiz "/" para "/br/"
+# -----------------------------------------------------------
+RewriteRule ^$ /br/ [R=301,L]
+
+# -----------------------------------------------------------
+# 4. Roteamento por idioma
+#    /br/                       → page-router.php?lang=br&slug=
+#    /br/sobre                  → page-router.php?lang=br&slug=sobre
+#    /br/croche/como-comecar    → page-router.php?lang=br&slug=croche/como-comecar
+#    Mesmo para /en/...
+# -----------------------------------------------------------
+RewriteRule ^(br|en)/?(.*)$ page-router.php?lang=$1&slug=$2 [QSA,L]
+
+# -----------------------------------------------------------
+# 5. Fallback: links sem prefixo de idioma redirecionam para /br/<path>
+#    Útil pra URLs antigas e SEO. Comente se preferir 404 puro.
+# -----------------------------------------------------------
+RewriteRule ^(.+)$ /br/$1 [R=301,L]

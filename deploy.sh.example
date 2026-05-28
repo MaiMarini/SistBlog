@@ -1,0 +1,83 @@
+#!/bin/bash
+# Deploy para HostGator via HTTP POST (endpoint install.php no servidor)
+#
+# TEMPLATE — copie para deploy.sh e preencha:
+#   cp deploy.sh.example deploy.sh
+#   chmod +x deploy.sh
+#
+# Depois edite deploy.sh com:
+#   - DEPLOY_URL: URL do endpoint install.php no seu servidor
+#   - DEPLOY_KEY: a mesma chave definida em DEPLOY_KEY em config/database.php
+#   - LOCAL_DIR:  caminho absoluto da pasta do projeto local
+#
+# Rodar:
+#   bash deploy.sh
+
+DEPLOY_URL="http://SEU_DOMINIO.com/install.php"
+DEPLOY_KEY="DEFINA_UMA_CHAVE_SECRETA_AQUI"
+LOCAL_DIR="/caminho/absoluto/para/o/projeto"
+
+echo "🚀 Iniciando deploy..."
+cd "$LOCAL_DIR"
+
+# Lista de arquivos a enviar (manualmente — adicione novos arquivos aqui)
+FILES=(
+    ".htaccess"
+    "index.php"
+    "page.php"
+    "page-router.php"
+    "migrate.php"
+    "site.webmanifest"
+    "config/database.php"
+    "includes/auth.php"
+    "includes/functions.php"
+    "includes/settings.php"
+    "includes/categories.php"
+    "includes/site-helpers.php"
+    "includes/site-header.php"
+    "includes/site-footer.php"
+    "includes/site-drawer.php"
+    "admin/index.php"
+    "admin/login.php"
+    "admin/logout.php"
+    "admin/pages.php"
+    "admin/page-form.php"
+    "admin/page-delete.php"
+    "admin/preview.php"
+    "admin/settings.php"
+    "admin/includes/sidebar.php"
+    "admin/assets/admin.css"
+    "admin/assets/admin.js"
+    "templates/advertorial.php"
+    "templates/blog-personal.php"
+    "templates/landing.php"
+    "templates/structured.php"
+    "assets/css/presell.css"
+    "assets/css/site.css"
+    "assets/js/presell.js"
+    "assets/js/header.js"
+    "pages/br/home.php"
+    "pages/br/sobre.php"
+    "pages/br/contato.php"
+    "pages/br/politica-de-privacidade.php"
+    "pages/br/termos.php"
+    "pages/br/divulgacao-afiliados.php"
+    "pages/br/404.php"
+)
+
+ERRORS=0
+for file in "${FILES[@]}"; do
+    RESULT=$(curl -s -X POST "$DEPLOY_URL" -F "key=$DEPLOY_KEY" -F "path=$file" -F "file=@$file")
+    if [[ "$RESULT" == OK* ]]; then
+        echo "  ✅ $file"
+    else
+        echo "  ❌ $file - $RESULT"
+        ERRORS=$((ERRORS + 1))
+    fi
+done
+
+if [ $ERRORS -eq 0 ]; then
+    echo "✅ Deploy concluído com sucesso! ($((${#FILES[@]})) arquivos)"
+else
+    echo "⚠️ Deploy concluído com $ERRORS erro(s)"
+fi

@@ -1,0 +1,60 @@
+# ============================================
+# KALLME — .gitignore
+# ============================================
+
+# ---- Credenciais e segredos ----
+# database.php tem senha do MySQL + DEPLOY_KEY + MIGRATE_KEY
+/config/database.php
+
+# deploy.sh tem URL e chave de deploy do servidor
+/deploy.sh
+
+# Credenciais de SFTP/FTP da extensão do VS Code
+/.vscode/sftp.json
+
+# ---- Pasta de uploads (gerada pelo admin) ----
+# Mantém a pasta no Git via .gitkeep mas exclui o conteúdo
+/uploads/*
+!/uploads/.gitkeep
+
+# ---- Scripts/arquivos temporários ----
+/_dbcheck*.php
+/_*.php
+/_*.txt
+/change-pwd.php
+
+# ---- IDE / Editor ----
+/.idea/
+/.vscode/*
+!/.vscode/extensions.json
+!/.vscode/settings.example.json
+
+# ---- Configurações locais do Claude/agents ----
+/.claude/
+/AGENTS.md
+
+# ---- Sistema operacional ----
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# ---- Logs ----
+*.log
+/error_log
+/php_errors.log
+
+# ---- Caches diversos ----
+*.cache
+/node_modules/
+/vendor/
+
+# ---- Backups acidentais ----
+*.bak
+*.backup
+*.old
+*.zip
+*.tar
+*.tar.gz

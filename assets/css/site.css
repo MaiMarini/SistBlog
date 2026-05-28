@@ -1,0 +1,2270 @@
+/* ============================================
+   KALLME — Site CSS (Sereno Romântico)
+   Aplicado em: páginas estáticas e artigos
+   Pre-sells usam /assets/css/presell.css (legado)
+   ============================================ */
+
+/* ============================================
+   A) IMPORTS
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ============================================
+   B) CSS VARIABLES (:root)
+   ============================================ */
+:root {
+    /* ---- Cores: backgrounds ---- */
+    --color-bg-primary: #FAF6F0;
+    /* Off-white pêssego — bg principal */
+    --color-bg-card: #F5E1DC;
+    /* Rosa pétala claro — bg de cards */
+    --color-bg-white: #FFFFFF;
+    /* Branco puro */
+
+    /* ---- Cores: navy / primário ---- */
+    --color-primary: #3D4F6E;
+    /* Navy médio */
+    --color-primary-dark: #23314A;
+    /* Navy escuro — texto principal */
+
+    /* ---- Cores: acentos ---- */
+    --color-accent: #DB8084;
+    /* Coral rosé — acento principal */
+    --color-accent-soft: #E98A99;
+    /* Rosa empoeirado — acento secundário */
+    --color-light-blue: #9BB2C6;
+    /* Azul-cinza claro — detalhes */
+
+    /* ---- Cores: CTA ---- */
+    --color-cta: #D03B47;
+    /* Cherry pop — botões CTA */
+    --color-cta-hover: #C03A3E;
+    /* Berry pop — hover */
+    --color-cta-pressed: #A02830;
+    /* Berry profundo — pressed */
+
+    /* ---- Cores: texto ---- */
+    --color-text-primary: #23314A;
+    --color-text-secondary: #7E8AA0;
+    /* Cinza-azulado */
+    --color-text-disabled: #B8BFCB;
+    --color-text-on-dark: #FAF6F0;
+
+    /* ---- Cores: bordas ---- */
+    --color-border-light: #E8DCD3;
+    /* Bege claro */
+    --color-border-medium: #C8B89C;
+    /* Bege médio */
+
+    /* ---- Cores: feedback ---- */
+    --color-warning: #B53D2B;
+    --color-warning-bg: #FFF3F0;
+    --color-success: #6B8E5A;
+
+    /* ---- Spacing (múltiplos de 8) ---- */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+    --space-3xl: 64px;
+    --space-4xl: 96px;
+
+    /* ---- Border radius ---- */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+
+    /* ---- Sombras ---- */
+    --shadow-sm: 0 2px 8px rgba(35, 49, 74, 0.06);
+    --shadow-md: 0 4px 20px rgba(35, 49, 74, 0.08);
+    --shadow-lg: 0 8px 30px rgba(35, 49, 74, 0.12);
+
+    /* ---- Containers ---- */
+    --container-narrow: 680px;
+    --container-medium: 900px;
+    --container-wide: 1100px;
+    --container-full: 1280px;
+
+    /* ---- Fontes ---- */
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'Courier New', monospace;
+
+    /* ---- Transições ---- */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.25s ease;
+    --transition-slow: 0.4s ease;
+
+    /* ---- Sidebar lateral ---- */
+    --sidebar-width: 240px;
+}
+
+/* ============================================
+   C) RESET MINIMAL
+   ============================================ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+}
+
+img,
+svg,
+video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+}
+
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* sr-only para acessibilidade */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ============================================
+   D) BASE TYPOGRAPHY
+   ============================================ */
+body {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--color-text-primary);
+    background: var(--color-bg-primary);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-display);
+    color: var(--color-primary-dark);
+    margin: 0 0 var(--space-md);
+}
+
+h1 {
+    font-size: 42px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+h3 {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+h4 {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+h5 {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+h6 {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+p {
+    margin: 0 0 var(--space-md);
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--transition-base);
+}
+
+a:hover {
+    color: var(--color-cta);
+    text-decoration: underline;
+}
+
+strong {
+    font-weight: 600;
+    color: var(--color-primary-dark);
+}
+
+em {
+    font-style: italic;
+    color: var(--color-accent);
+}
+
+/* ============================================
+   E) CONTAINERS
+   ============================================ */
+.container,
+.container-narrow,
+.container-medium,
+.container-wide,
+.container-full {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+    width: 100%;
+}
+
+.container,
+.container-wide {
+    max-width: var(--container-wide);
+}
+
+.container-narrow {
+    max-width: var(--container-narrow);
+}
+
+.container-medium {
+    max-width: var(--container-medium);
+}
+
+.container-full {
+    max-width: var(--container-full);
+}
+
+/* ============================================
+   F) HEADER (.site-header)
+   ============================================ */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-bg-primary);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-md) 0;
+}
+
+.site-header-inner {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+}
+
+.site-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    text-decoration: none;
+    color: var(--color-primary-dark);
+    flex-shrink: 0;
+}
+
+.site-logo img {
+    height: 48px;
+    width: auto;
+}
+
+.site-logo-text {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+}
+
+.site-nav-link {
+    color: var(--color-primary-dark);
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    padding: var(--space-xs) 0;
+    border-bottom: 2px solid transparent;
+    transition: color var(--transition-base), border-color var(--transition-base);
+}
+
+.site-nav-link:hover {
+    color: var(--color-cta);
+    text-decoration: none;
+}
+
+.site-nav-link.active,
+.site-nav-link.is-active {
+    color: var(--color-cta);
+    border-bottom-color: var(--color-cta);
+}
+
+/* Seletor de idioma */
+.site-lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 12px;
+    color: var(--color-text-secondary);
+}
+
+.site-lang-switch .lang-btn {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-base), color var(--transition-base);
+}
+
+.site-lang-switch .lang-btn:hover {
+    background: rgba(35, 49, 74, 0.06);
+    color: var(--color-primary-dark);
+}
+
+.site-lang-switch .lang-btn.active {
+    color: var(--color-cta);
+    font-weight: 600;
+}
+
+.site-lang-switch .lang-sep {
+    color: var(--color-text-disabled);
+}
+
+/* Toggle hambúrguer (apenas mobile) */
+.site-nav-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-md);
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--color-primary-dark);
+}
+
+/* ============================================
+   G) FOOTER — Sereno Romântico
+   Estrutura: 4 colunas (Marca | Site | Legal | Redes)
+   ============================================
+   - Sem tagline (removida)
+   - Logo alinhada ao topo (align-items: start no grid)
+   - Pinterest virou coluna própria "Redes" (ícone + texto)
+   - Padding reduzido para footer mais compacto
+   - Tablet (≤1024px): 2 colunas / Mobile (≤640px): 1 coluna centralizada */
+
+.site-footer {
+    background: var(--color-primary-dark);
+    color: var(--color-text-on-dark);
+    padding: var(--space-2xl) 0 var(--space-lg);
+    margin-top: var(--space-3xl);
+}
+
+/* Grid principal — 4 colunas, marca um pouco mais larga, alinhadas ao topo */
+.site-footer__grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid rgba(232, 220, 211, 0.15);
+    align-items: start;
+}
+
+@media (max-width: 1024px) {
+    .site-footer__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-xl);
+    }
+}
+
+@media (max-width: 640px) {
+    .site-footer__grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+        text-align: center;
+    }
+}
+
+/* Títulos de coluna (Site / Legal / Redes) */
+.footer-col__title {
+    font-family: var(--font-display);
+    font-size: 17px;
+    color: var(--color-accent-soft);
+    margin: 0 0 var(--space-md);
+    font-weight: 500;
+}
+
+/* Coluna marca */
+.footer-col--brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+@media (max-width: 640px) {
+    .footer-col--brand {
+        align-items: center;
+    }
+}
+
+/* Logo do footer
+   - <img> com classe explícita .footer-logo__img (200px desktop / 240px mobile)
+   - Texto fallback escondido sempre que existe <img> (regra :has() abaixo) */
+.footer-logo {
+    display: inline-block;
+    text-decoration: none;
+    line-height: 0;
+    margin: 0;
+    color: var(--color-bg-primary);
+}
+
+.footer-logo__img {
+    display: block;
+    width: 200px;
+    max-width: 100%;
+    height: auto;
+}
+
+.footer-logo:has(img) .footer-logo__text {
+    display: none;
+}
+
+.footer-logo__text {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--color-bg-primary);
+    letter-spacing: 1px;
+    line-height: 1.2;
+}
+
+/* Navegação interna das colunas */
+.footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.footer-nav a {
+    color: rgba(250, 246, 240, 0.75);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color var(--transition-fast);
+}
+
+.footer-nav a:hover {
+    color: var(--color-accent-soft);
+}
+
+/* Coluna Redes — ícone + texto na mesma linha */
+.footer-nav--social a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.footer-nav--social a i,
+.footer-nav--social a svg {
+    flex-shrink: 0;
+    color: var(--color-accent-soft);
+    transition: color var(--transition-fast);
+}
+
+.footer-nav--social a:hover i,
+.footer-nav--social a:hover svg {
+    color: var(--color-accent);
+}
+
+@media (max-width: 640px) {
+    .footer-nav--social a {
+        justify-content: center;
+    }
+}
+
+/* Linha inferior: copyright + contato */
+.site-footer__bottom {
+    padding-top: var(--space-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+@media (max-width: 768px) {
+    .site-footer__bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-sm);
+    }
+}
+
+.footer-copyright,
+.footer-contact {
+    font-size: 13px;
+    color: rgba(250, 246, 240, 0.5);
+    margin: 0;
+}
+
+.footer-copyright a,
+.footer-contact a {
+    color: var(--color-accent-soft);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.footer-copyright a:hover,
+.footer-contact a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+}
+
+/* ============================================
+   H) BOTÕES
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 13px;
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: var(--transition-base);
+    border: none;
+    text-decoration: none;
+    line-height: 1.2;
+}
+
+.btn-primary {
+    background: var(--color-cta);
+    color: var(--color-text-on-dark);
+}
+
+.btn-primary:hover {
+    background: var(--color-cta-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    color: var(--color-text-on-dark);
+    text-decoration: none;
+}
+
+.btn-primary:active {
+    background: var(--color-cta-pressed);
+    transform: translateY(0);
+}
+
+.btn-primary:disabled,
+.btn-primary.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--color-primary-dark);
+    border: 1.5px solid var(--color-primary-dark);
+}
+
+.btn-secondary:hover {
+    background: var(--color-primary-dark);
+    color: var(--color-text-on-dark);
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+.btn-secondary:active {
+    background: var(--color-primary);
+    transform: translateY(0);
+}
+
+.btn-text {
+    background: transparent;
+    color: var(--color-cta);
+    padding: var(--space-sm) 0;
+    text-transform: none;
+    letter-spacing: normal;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+}
+
+.btn-text:hover {
+    color: var(--color-cta-hover);
+    border-bottom-color: var(--color-cta-hover);
+    text-decoration: none;
+}
+
+.btn-sm {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 11px;
+}
+
+.btn-lg {
+    padding: var(--space-md) var(--space-xl);
+    font-size: 14px;
+}
+
+.btn-block {
+    display: flex;
+    width: 100%;
+    text-align: center;
+}
+
+/* ============================================
+   I) CARDS
+   ============================================ */
+
+/* Grid de cards de artigo */
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+}
+
+/* Card padrão de artigo */
+.card-article {
+    background: var(--color-bg-white);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    display: flex;
+    flex-direction: column;
+}
+
+.card-article:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.card-article__image {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.card-article__content {
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.card-article__badge {
+    display: inline-block;
+    background: var(--color-primary);
+    color: var(--color-text-on-dark);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+    align-self: flex-start;
+}
+
+.card-article__title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--color-primary-dark);
+    margin: 0 0 var(--space-sm);
+}
+
+.card-article__title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.card-article__title a:hover {
+    color: var(--color-cta);
+}
+
+.card-article__meta {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-md);
+}
+
+.card-article__excerpt {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-md);
+}
+
+.card-article__link {
+    color: var(--color-cta);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    text-decoration: none;
+    margin-top: auto;
+}
+
+.card-article__link:hover {
+    color: var(--color-cta-hover);
+    text-decoration: underline;
+}
+
+/* Card destaque (featured) */
+.card-featured {
+    background: var(--color-primary-dark);
+    color: var(--color-text-on-dark);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+}
+
+.card-featured__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 280px;
+}
+
+.card-featured__content {
+    padding: var(--space-2xl) var(--space-xl);
+}
+
+.card-featured .card-article__badge {
+    background: var(--color-cta);
+}
+
+.card-featured .card-article__title {
+    color: var(--color-text-on-dark);
+    font-size: 30px;
+}
+
+.card-featured .card-article__meta,
+.card-featured .card-article__excerpt {
+    color: #C8D2DE;
+}
+
+/* Card compacto (related / sidebar) */
+.card-compact {
+    background: var(--color-bg-white);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    overflow: hidden;
+    transition: box-shadow var(--transition-base);
+}
+
+.card-compact:hover {
+    box-shadow: var(--shadow-sm);
+}
+
+.card-compact__image {
+    width: 120px;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-compact__content {
+    padding: var(--space-md) var(--space-lg);
+}
+
+.card-compact__title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    line-height: 1.35;
+    margin: 0 0 var(--space-xs);
+    color: var(--color-primary-dark);
+}
+
+.card-compact__meta {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+}
+
+/* ============================================
+   J) BLOCOS (uso dentro de artigos)
+   ============================================ */
+
+/* Citação */
+.block-quote {
+    border-left: 4px solid var(--color-cta);
+    background: var(--color-bg-card);
+    padding: var(--space-xl);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    margin: var(--space-lg) 0;
+}
+
+.block-quote q,
+.block-quote blockquote {
+    display: block;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--color-primary-dark);
+    margin: 0 0 var(--space-sm);
+    quotes: none;
+}
+
+.block-quote cite {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+/* Dica */
+.block-tip {
+    background: linear-gradient(135deg, #F5E1DC, #FFE8DD);
+    border-left: 4px solid var(--color-accent);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    margin: var(--space-lg) 0;
+}
+
+.block-tip__label {
+    display: inline-block;
+    background: var(--color-accent);
+    color: var(--color-text-on-dark);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: var(--space-sm);
+}
+
+.block-tip p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+/* Atenção */
+.block-warning {
+    background: var(--color-warning-bg);
+    border-left: 4px solid var(--color-warning);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    margin: var(--space-lg) 0;
+}
+
+.block-warning__label {
+    display: inline-block;
+    background: var(--color-warning);
+    color: var(--color-bg-white);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: var(--space-sm);
+}
+
+.block-warning p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+/* Newsletter */
+.block-newsletter {
+    background: var(--color-primary-dark);
+    color: var(--color-text-on-dark);
+    padding: var(--space-2xl);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    margin: var(--space-2xl) 0;
+}
+
+.block-newsletter h3 {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--color-text-on-dark);
+    margin: 0 0 var(--space-sm);
+}
+
+.block-newsletter p {
+    color: #C8D2DE;
+    font-size: 15px;
+    margin: 0 0 var(--space-lg);
+}
+
+.block-newsletter__form {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.block-newsletter__form input[type="email"] {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-text-on-dark);
+    font-family: inherit;
+    font-size: 14px;
+    min-width: 0;
+}
+
+.block-newsletter__form input[type="email"]::placeholder {
+    color: #9BA5B8;
+}
+
+.block-newsletter__form button {
+    background: var(--color-cta);
+    color: var(--color-text-on-dark);
+    border: none;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 13px;
+}
+
+.block-newsletter__form button:hover {
+    background: var(--color-cta-hover);
+}
+
+/* Produto afiliado — borda visível por exigência ética/legal */
+.block-product {
+    background: var(--color-bg-white);
+    border: 2px solid var(--color-accent-soft);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: var(--space-lg);
+    align-items: center;
+    margin: var(--space-lg) 0;
+}
+
+.block-product__image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+}
+
+.block-product__tag {
+    display: inline-block;
+    background: var(--color-accent-soft);
+    color: var(--color-primary-dark);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: var(--space-xs);
+}
+
+.block-product__title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--color-primary-dark);
+    margin: 0 0 var(--space-xs);
+}
+
+.block-product__desc {
+    font-size: 13px;
+    color: var(--color-text-primary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ============================================
+   K) PROSE (estilo de artigos)
+   ============================================ */
+.prose {
+    max-width: var(--container-narrow);
+    margin: 0 auto;
+}
+
+.prose>* {
+    max-width: 100%;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+    font-family: var(--font-display);
+    color: var(--color-primary-dark);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-md);
+}
+
+.prose h1 {
+    font-size: 42px;
+}
+
+.prose h2 {
+    font-size: 32px;
+}
+
+.prose h3 {
+    font-size: 24px;
+}
+
+.prose h4 {
+    font-size: 20px;
+}
+
+.prose p {
+    margin: 0 0 var(--space-md);
+    line-height: 1.75;
+}
+
+.prose a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-color: rgba(219, 128, 132, 0.4);
+    text-underline-offset: 3px;
+}
+
+.prose a:hover {
+    color: var(--color-cta);
+    text-decoration-color: var(--color-cta);
+}
+
+.prose strong {
+    font-weight: 600;
+    color: var(--color-primary-dark);
+}
+
+.prose em {
+    font-style: italic;
+    color: var(--color-accent);
+}
+
+.prose ul,
+.prose ol {
+    margin: 0 0 var(--space-md);
+    padding-left: var(--space-lg);
+    list-style: revert;
+}
+
+.prose li {
+    margin-bottom: var(--space-sm);
+    line-height: 1.75;
+}
+
+.prose img {
+    margin: var(--space-lg) 0;
+    border-radius: var(--radius-lg);
+    max-width: 100%;
+}
+
+.prose figure {
+    margin: var(--space-lg) 0;
+}
+
+.prose figcaption {
+    font-style: italic;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    text-align: center;
+    margin-top: var(--space-sm);
+}
+
+.prose hr {
+    border: 0;
+    border-top: 1px solid var(--color-border-light);
+    margin: var(--space-2xl) 0;
+}
+
+.prose code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--color-bg-card);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    color: var(--color-cta-pressed);
+}
+
+.prose pre {
+    background: var(--color-primary-dark);
+    color: var(--color-text-on-dark);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    line-height: 1.5;
+    margin: var(--space-lg) 0;
+}
+
+.prose pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+}
+
+/* ============================================
+   L) UTILITÁRIOS
+   ============================================ */
+
+/* Margens — top */
+.mt-xs {
+    margin-top: var(--space-xs);
+}
+
+.mt-sm {
+    margin-top: var(--space-sm);
+}
+
+.mt-md {
+    margin-top: var(--space-md);
+}
+
+.mt-lg {
+    margin-top: var(--space-lg);
+}
+
+.mt-xl {
+    margin-top: var(--space-xl);
+}
+
+.mt-2xl {
+    margin-top: var(--space-2xl);
+}
+
+.mt-3xl {
+    margin-top: var(--space-3xl);
+}
+
+.mt-4xl {
+    margin-top: var(--space-4xl);
+}
+
+/* Margens — bottom */
+.mb-xs {
+    margin-bottom: var(--space-xs);
+}
+
+.mb-sm {
+    margin-bottom: var(--space-sm);
+}
+
+.mb-md {
+    margin-bottom: var(--space-md);
+}
+
+.mb-lg {
+    margin-bottom: var(--space-lg);
+}
+
+.mb-xl {
+    margin-bottom: var(--space-xl);
+}
+
+.mb-2xl {
+    margin-bottom: var(--space-2xl);
+}
+
+.mb-3xl {
+    margin-bottom: var(--space-3xl);
+}
+
+.mb-4xl {
+    margin-bottom: var(--space-4xl);
+}
+
+/* Padding vertical */
+.py-xs {
+    padding-top: var(--space-xs);
+    padding-bottom: var(--space-xs);
+}
+
+.py-sm {
+    padding-top: var(--space-sm);
+    padding-bottom: var(--space-sm);
+}
+
+.py-md {
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-md);
+}
+
+.py-lg {
+    padding-top: var(--space-lg);
+    padding-bottom: var(--space-lg);
+}
+
+.py-xl {
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-xl);
+}
+
+.py-2xl {
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-2xl);
+}
+
+.py-3xl {
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-3xl);
+}
+
+.py-4xl {
+    padding-top: var(--space-4xl);
+    padding-bottom: var(--space-4xl);
+}
+
+/* Padding horizontal */
+.px-xs {
+    padding-left: var(--space-xs);
+    padding-right: var(--space-xs);
+}
+
+.px-sm {
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+}
+
+.px-md {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+}
+
+.px-lg {
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+}
+
+.px-xl {
+    padding-left: var(--space-xl);
+    padding-right: var(--space-xl);
+}
+
+.px-2xl {
+    padding-left: var(--space-2xl);
+    padding-right: var(--space-2xl);
+}
+
+.px-3xl {
+    padding-left: var(--space-3xl);
+    padding-right: var(--space-3xl);
+}
+
+.px-4xl {
+    padding-left: var(--space-4xl);
+    padding-right: var(--space-4xl);
+}
+
+/* Texto: alinhamento */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Texto: cor */
+.text-primary {
+    color: var(--color-text-primary);
+}
+
+.text-secondary {
+    color: var(--color-text-secondary);
+}
+
+.text-accent {
+    color: var(--color-accent);
+}
+
+.text-cta {
+    color: var(--color-cta);
+}
+
+/* Texto: tamanho */
+.text-sm {
+    font-size: 13px;
+}
+
+.text-base {
+    font-size: 17px;
+}
+
+.text-lg {
+    font-size: 20px;
+}
+
+.text-xl {
+    font-size: 24px;
+}
+
+/* Display helpers */
+.hide-mobile {
+    /* só esconde em mobile via media query (abaixo) */
+}
+
+.hide-desktop {
+    /* só esconde em desktop via media query (abaixo) */
+}
+
+.show-mobile {
+    display: none;
+}
+
+.show-desktop {
+    display: block;
+}
+
+/* === TAMANHOS DE ÍCONE (Phosphor é font-based: usa font-size) === */
+.icon-xs  { font-size: 14px; }
+.icon-sm  { font-size: 18px; }
+.icon-md  { font-size: 24px; }
+.icon-lg  { font-size: 32px; }
+.icon-xl  { font-size: 48px; }
+.icon-2xl { font-size: 64px; }
+
+/* Ícones Phosphor herdam a cor do elemento pai (currentColor) */
+[class^="ph-"],
+[class*=" ph-"] {
+    color: inherit;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* ============================================
+   M) RESPONSIVIDADE
+   ============================================ */
+
+/* ---- Mobile (até 640px) ---- */
+@media (max-width: 640px) {
+
+    /* Tipografia reduzida */
+    h1 {
+        font-size: 32px;
+    }
+
+    h2 {
+        font-size: 26px;
+    }
+
+    h3 {
+        font-size: 22px;
+    }
+
+    h4 {
+        font-size: 18px;
+    }
+
+    .prose h1 {
+        font-size: 32px;
+    }
+
+    .prose h2 {
+        font-size: 26px;
+    }
+
+    .prose h3 {
+        font-size: 22px;
+    }
+
+    /* Containers respiram menos */
+    .container,
+    .container-narrow,
+    .container-medium,
+    .container-wide,
+    .container-full {
+        padding-left: var(--space-md);
+        padding-right: var(--space-md);
+    }
+
+    /* Header: mostrar hambúrguer, esconder nav (a menos que aberto) */
+    .site-header-inner {
+        flex-wrap: wrap;
+    }
+
+    .site-logo img {
+        height: 40px;
+    }
+
+    .site-logo-text {
+        font-size: 18px;
+    }
+
+    .site-nav-toggle {
+        display: inline-flex;
+    }
+
+    .site-nav {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        gap: var(--space-sm);
+        padding-top: var(--space-md);
+        border-top: 1px solid var(--color-border-light);
+        margin-top: var(--space-sm);
+    }
+
+    .site-nav.is-open {
+        display: flex;
+    }
+
+    .site-nav-link {
+        padding: var(--space-sm) 0;
+        font-size: 16px;
+    }
+
+    /* Grids colapsam */
+    .articles-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card-featured {
+        grid-template-columns: 1fr;
+    }
+
+    .card-featured__content {
+        padding: var(--space-xl) var(--space-lg);
+    }
+
+    .card-featured .card-article__title {
+        font-size: 24px;
+    }
+
+    .block-product {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .block-product__image {
+        margin: 0 auto;
+    }
+
+    /* Newsletter form vira coluna */
+    .block-newsletter__form {
+        flex-direction: column;
+    }
+
+    /* Display utils */
+    .hide-mobile {
+        display: none !important;
+    }
+
+    .show-mobile {
+        display: block;
+    }
+
+    .show-desktop {
+        display: none;
+    }
+}
+
+/* ---- Tablet (641-1024px) ---- */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .articles-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ---- Desktop (acima de 1025px) ---- */
+@media (min-width: 1025px) {
+    .hide-desktop {
+        display: none !important;
+    }
+
+    .container,
+    .container-narrow,
+    .container-medium,
+    .container-wide,
+    .container-full {
+        padding-left: var(--space-xl);
+        padding-right: var(--space-xl);
+    }
+
+    .articles-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ============================================
+   N) PÁGINAS ESTÁTICAS — Home, Sobre, Contato, 404
+   ============================================ */
+
+/* ---- Hero da homepage ---- */
+.hero {
+    padding: var(--space-4xl) 0 var(--space-3xl);
+    text-align: center;
+}
+
+.hero__title {
+    font-family: var(--font-display);
+    font-size: 56px;
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--color-primary-dark);
+    max-width: 800px;
+    margin: 0 auto var(--space-md);
+}
+
+.hero__tagline {
+    font-family: var(--font-body);
+    font-size: 19px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto var(--space-xl);
+}
+
+.hero__actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ---- Section de artigos na home ---- */
+.section-articles {
+    padding: var(--space-3xl) 0;
+}
+
+.section-header {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto var(--space-2xl);
+}
+
+.section-header h2 {
+    font-family: var(--font-display);
+    font-size: 36px;
+    color: var(--color-primary-dark);
+    margin: 0 0 var(--space-sm);
+}
+
+.section-subtitle {
+    color: var(--color-text-secondary);
+    font-size: 17px;
+    font-style: italic;
+    margin: 0;
+}
+
+/* ---- Empty state — quando ainda não há artigos publicados ----
+   FIX: antes era apenas texto centralizado solto. Agora vira card rosa
+   pétala arredondado (bg-card + radius-lg) com margin-top — destaque visual
+   condizente com o design system. */
+.empty-state {
+    text-align: center;
+    padding: var(--space-3xl) var(--space-lg);
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-secondary);
+    font-size: 17px;
+    font-style: italic;
+    margin-top: var(--space-xl);
+}
+
+.empty-state p {
+    margin: 0;
+}
+
+/* === ESTILOS PRA TEXTOS LEGAIS === */
+
+.prose .prose-intro {
+    font-size: 19px;
+    font-style: italic;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.prose .prose-intro {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.6;
+    color: var(--color-primary-dark);
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+@media (max-width: 768px) {
+    .prose .prose-intro {
+        font-size: 18px;
+    }
+}
+
+.prose .prose-meta-footer {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border-light);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+/* Inline icons em metadados (clock + texto) */
+.card-article__meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.card-article__meta .separator {
+    color: var(--color-text-disabled);
+    margin: 0 4px;
+}
+
+.card-article__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ---- Mini sobre na home ----  */
+.section-about-mini {
+    background: var(--color-bg-card);
+    padding: var(--space-3xl) 0;
+    margin-top: var(--space-2xl);
+}
+
+.about-mini__content {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.about-mini__content h2 {
+    font-family: var(--font-display);
+    font-size: 36px;
+    color: var(--color-primary-dark);
+    margin: 0 0 var(--space-md);
+}
+
+.about-mini__content p {
+    color: var(--color-text-primary);
+    font-size: 17px;
+    line-height: 1.75;
+    margin: 0 auto var(--space-lg);
+    max-width: 600px;
+}
+
+/* ---- Prose header (cabeçalho de páginas estáticas) ---- */
+.prose-header {
+    text-align: center;
+    padding: var(--space-3xl) 0 var(--space-xl);
+    border-bottom: 1px solid var(--color-border-light);
+    margin-bottom: var(--space-2xl);
+}
+
+.prose-header h1 {
+    margin-bottom: var(--space-sm);
+}
+
+.prose-subtitle {
+    font-size: 19px;
+    color: var(--color-text-secondary);
+    font-style: italic;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.prose-meta {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin-top: var(--space-sm);
+}
+
+/* ---- Contact card ---- */
+.contact-card {
+    background: var(--color-bg-card);
+    padding: var(--space-2xl);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    margin: var(--space-xl) 0;
+}
+
+.contact-card>i,
+.contact-card>svg {
+    color: var(--color-cta);
+    margin-bottom: var(--space-md);
+}
+
+.contact-card h2 {
+    margin-bottom: var(--space-sm);
+}
+
+.contact-card a {
+    font-size: 19px;
+    color: var(--color-cta);
+    text-decoration: none;
+}
+
+.contact-card a:hover {
+    text-decoration: underline;
+}
+
+.contact-meta {
+    margin-top: var(--space-md);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin-bottom: 0;
+}
+
+.contact-faq {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.contact-faq li {
+    padding: var(--space-md) 0;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.contact-faq li:last-child {
+    border-bottom: none;
+}
+
+.contact-faq strong {
+    display: block;
+    margin-bottom: var(--space-xs);
+}
+
+/* ---- Error page (404) ---- */
+.error-page {
+    text-align: center;
+    padding: var(--space-4xl) 0;
+}
+
+.error-page>i,
+.error-page>svg {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+    display: inline-block;
+}
+
+.error-page h1 {
+    margin-bottom: var(--space-md);
+}
+
+.error-page>p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-xl);
+    font-size: 17px;
+}
+
+.error-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ---- Responsive: tablet (≤768px) ----
+   Spec pede 768px especificamente pro hero/nav (cobre tablets e
+   smartphones grandes). O 640px abaixo é pra ajustes finais em
+   celulares menores. */
+@media (max-width: 768px) {
+    .hero {
+        padding: var(--space-2xl) 0;
+    }
+
+    .hero__title {
+        font-size: 36px;
+    }
+
+    .hero__tagline {
+        font-size: 16px;
+    }
+
+    .hero__actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .hero__actions .btn {
+        width: 100%;
+    }
+
+    .site-nav {
+        gap: var(--space-md);
+    }
+
+    .section-articles {
+        padding: var(--space-2xl) 0;
+    }
+
+    .section-header h2,
+    .about-mini__content h2 {
+        font-size: 28px;
+    }
+}
+
+/* ---- Responsive: mobile pequeno (≤640px) ---- */
+@media (max-width: 640px) {
+    .hero__title {
+        font-size: 32px;
+    }
+
+    .prose-header {
+        padding: var(--space-2xl) 0 var(--space-lg);
+    }
+
+    .prose-subtitle {
+        font-size: 17px;
+    }
+
+    .contact-card {
+        padding: var(--space-xl) var(--space-lg);
+    }
+
+    .error-page {
+        padding: var(--space-3xl) 0;
+    }
+}
+
+/* ============================================
+   O) HEADER HORIZONTAL
+   ============================================ */
+main {
+    margin-left: 0 !important;
+    margin-top: 0;
+    min-height: 60vh;
+}
+
+/* === HEADER === */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-bg-card);
+    /* Rosa Pétala Claro #F5E1DC */
+    border-bottom: 1px solid rgba(35, 49, 74, 0.06);
+    padding: var(--space-md) 0;
+    box-shadow: 0 2px 12px rgba(35, 49, 74, 0.04);
+}
+
+.site-header__inner {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-md);
+    /* Padding lateral menor pra "encostar" nas bordas; usa largura total */
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+    max-width: 100%;
+    margin: 0;
+}
+
+/* === ZONA ESQUERDA: HAMBÚRGUER === */
+.header-menu-btn {
+    background: transparent;
+    border: none;
+    padding: var(--space-sm);
+    cursor: pointer;
+    color: var(--color-primary-dark);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    transition: background var(--transition-fast);
+    justify-self: start;
+}
+
+.header-menu-btn:hover {
+    background: rgba(35, 49, 74, 0.08);
+}
+
+/* === ZONA CENTRO: NAVEGAÇÃO === */
+.site-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xl);
+}
+
+.site-nav a {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--color-primary-dark);
+    text-decoration: none;
+    padding: var(--space-xs) 0;
+    transition: color var(--transition-fast);
+    position: relative;
+}
+
+.site-nav a:hover,
+.site-nav a.is-active {
+    color: var(--color-cta);
+}
+
+.site-nav a.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--color-cta);
+}
+
+/* Logo "Kallme" pequena dentro do nav (em páginas não-home) */
+.site-nav__brand {
+    font-family: var(--font-display) !important;
+    font-size: 22px !important;
+    font-weight: 400 !important;
+    letter-spacing: 1px !important;
+    text-transform: none !important;
+    color: var(--color-primary-dark) !important;
+    padding: 0 var(--space-md) !important;
+}
+
+.site-nav__brand::after {
+    display: none !important;
+}
+
+/* === ZONA DIREITA: AÇÕES === */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    justify-self: end;
+}
+
+.header-action {
+    background: transparent;
+    border: none;
+    padding: var(--space-sm);
+    cursor: pointer;
+    color: var(--color-primary-dark);
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.header-action:hover {
+    background: rgba(35, 49, 74, 0.08);
+    color: var(--color-cta);
+}
+
+/* Ícones do header um pouco maiores (mais presença visual no peso regular) */
+.header-action i,
+.header-menu-btn i {
+    font-size: 22px;
+}
+
+/* === RESPONSIVO HEADER === */
+@media (max-width: 768px) {
+    .site-header__inner {
+        padding-left: var(--space-sm);
+        padding-right: var(--space-sm);
+    }
+
+    /* Em mobile, esconde os links do centro (ficam só no drawer).
+       Mantém visível apenas o brand (logo Kallme) em páginas não-home. */
+    .site-nav a:not(.site-nav__brand) {
+        display: none;
+    }
+
+    .site-nav__brand {
+        display: inline-block !important;
+        font-size: 18px !important;
+    }
+}
+
+/* ============================================
+   P) HERO BANNER (HOMEPAGE)
+   ============================================
+   Imagem horizontal de fundo com "Kallme" sobreposto.
+   Só aparece na homepage. Enquanto /assets/img/hero-banner.jpg
+   não existir, o fundo cai no rosa pétala claro (fallback). */
+.hero-banner {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    min-height: 480px;
+    max-height: 720px;
+    background-image: url('/assets/img/hero-banner.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: var(--color-bg-card);
+    /* fallback se imagem não carregar */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Overlay escuro suave — garante legibilidade do texto sobre qualquer imagem */
+.hero-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+            rgba(35, 49, 74, 0.10) 0%,
+            rgba(35, 49, 74, 0.03) 100%);
+    z-index: 1;
+}
+
+.hero-banner__content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 var(--space-md);
+    color: var(--color-bg-primary);
+    max-width: 800px;
+}
+
+.hero-banner__title {
+    font-family: var(--font-display);
+    font-size: 120px;
+    font-weight: 400;
+    margin: 0 0 var(--space-md);
+    letter-spacing: 2px;
+    line-height: 1;
+    color: var(--color-primary-dark);
+    text-shadow: 0 2px 16px rgba(250, 246, 240, 0.5);
+}
+
+.hero-banner__tagline {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--color-cta);
+    letter-spacing: 1px;
+    text-shadow: 0 2px 16px rgba(250, 246, 240, 0.5);
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .hero-banner {
+        height: 50vh;
+        min-height: 380px;
+    }
+
+    .hero-banner__title {
+        font-size: 64px;
+    }
+
+    .hero-banner__tagline {
+        font-size: 17px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-banner__title {
+        font-size: 48px;
+    }
+
+    .hero-banner__tagline {
+        font-size: 15px;
+    }
+}
+
+/* ============================================
+   Q) DRAWER (MENU LATERAL DE CATEGORIAS)
+   ============================================ */
+.drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    max-width: 85vw;
+    height: 100vh;
+    background: var(--color-bg-primary);
+    border-right: 1px solid var(--color-border-light);
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform var(--transition-base);
+    overflow-y: auto;
+    box-shadow: 4px 0 24px rgba(35, 49, 74, 0.1);
+}
+
+.drawer.is-open {
+    transform: translateX(0);
+}
+
+.drawer__close {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    background: transparent;
+    border: none;
+    padding: var(--space-sm);
+    cursor: pointer;
+    color: var(--color-primary-dark);
+    border-radius: var(--radius-md);
+}
+
+.drawer__close:hover {
+    background: var(--color-bg-card);
+}
+
+.drawer__content {
+    padding: var(--space-2xl) var(--space-xl) var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+}
+
+.drawer__logo {
+    display: inline-block;
+    margin-bottom: var(--space-md);
+    text-decoration: none;
+    line-height: 0;
+}
+
+.drawer__logo-img {
+    width: 80px;
+    height: auto;
+}
+
+.drawer__section-title {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-md);
+}
+
+.drawer__nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.drawer__nav a {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-primary-dark);
+    text-decoration: none;
+    padding: var(--space-sm) 0;
+    transition: color var(--transition-fast);
+}
+
+.drawer__nav a:hover {
+    color: var(--color-cta);
+}
+
+/* Categorias "em breve" (não clicáveis ainda) */
+.drawer__category-placeholder {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    padding: var(--space-sm) 0;
+    cursor: default;
+}
+
+.drawer__coming-soon {
+    font-size: 11px;
+    font-weight: 400;
+    font-style: italic;
+    margin-left: auto;
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+}
+
+/* === OVERLAY DO DRAWER === */
+.drawer-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(35, 49, 74, 0.5);
+    z-index: 199;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.drawer-overlay.is-visible {
+    display: block;
+    opacity: 1;
+}
+
+body.menu-open {
+    overflow: hidden;
+}
