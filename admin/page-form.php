@@ -77,7 +77,7 @@ $pageTitle = $id ? 'Editar Página' : 'Nova Página';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($pageTitle) ?> — Kallme Admin</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>admin/assets/admin.css">
-    <script src="https://cdn.tiny.cloud/1/dkiaecki9zwrxev9ntxmp9vz6e5yj6yc1mzdb21kxoxrazl5/tinymce/6/tinymce.min.js"
+    <script src="https://cdn.tiny.cloud/1/<?= e(TINYMCE_KEY) ?>/tinymce/6/tinymce.min.js"
             referrerpolicy="origin"></script>
 </head>
 <body>
@@ -271,7 +271,7 @@ $pageTitle = $id ? 'Editar Página' : 'Nova Página';
             height: 600,
             menubar: false,
             language: 'pt_BR',
-            language_url: 'https://cdn.tiny.cloud/1/dkiaecki9zwrxev9ntxmp9vz6e5yj6yc1mzdb21kxoxrazl5/tinymce/6/langs/pt_BR.js',
+            language_url: 'https://cdn.tiny.cloud/1/<?= e(TINYMCE_KEY) ?>/tinymce/6/langs/pt_BR.js',
 
             plugins: [
                 'lists', 'link', 'image', 'autolink', 'searchreplace',

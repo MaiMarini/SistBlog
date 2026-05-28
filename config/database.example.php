@@ -23,11 +23,18 @@ define('DB_CHARSET', 'utf8mb4');
 define('BASE_URL', '/');
 
 // ---------- Chaves dos endpoints administrativos ----------
-// Use strings longas e aleatórias em produção (use um gerador).
+// Use strings longas e aleatórias em produção. Geração recomendada:
+//   openssl rand -hex 32         (64 caracteres hex)
+//   openssl rand -base64 48      (alternativa)
 // Não cometa estas chaves no Git — elas são o que protege /install.php
 // (endpoint de deploy via HTTP POST) e /migrate.php (rodar migrações).
-define('DEPLOY_KEY',  'TROQUE_PARA_UMA_STRING_LONGA_ALEATORIA');
-define('MIGRATE_KEY', 'TROQUE_PARA_OUTRA_STRING_LONGA_ALEATORIA');
+define('DEPLOY_KEY',  'GERE_COM_OPENSSL_RAND_HEX_32');
+define('MIGRATE_KEY', 'GERE_COM_OPENSSL_RAND_HEX_32');
+
+// ===== CHAVES DE TERCEIROS =====
+// Gere chave gratuita em https://www.tiny.cloud (1000 carregamentos/dia no free tier).
+// Recomendado: configurar "Approved domains" no painel da Tiny pra restringir uso.
+define('TINYMCE_KEY', 'sua_chave_tinymce_aqui');
 
 // ---------- PDO singleton ----------
 function getDB(): PDO {
