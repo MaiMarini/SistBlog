@@ -1,11 +1,11 @@
 <?php
 /**
- * ADMIN — FORMULÁRIO DE PÁGINA (versão transitória editorial)
+ * ADMIN — FORMULÁRIO DE PÁGINA
  *
- * Esta é uma versão simplificada após a remoção do sistema presell.
- * Apenas os campos básicos da tabela `pages` (schema editorial).
- *
- * Será substituída por um sistema de blocos modulares na próxima fase.
+ * Editor TinyMCE 6 + toolbar de blocos editoriais modulares
+ * (citação, dica, atenção, galeria, produto afiliado, etc.).
+ * Os blocos são injetados como HTML estruturado e renderizados
+ * pelo site público via assets/css/site.css.
  */
 
 require_once __DIR__ . '/../includes/auth.php';
@@ -77,23 +77,8 @@ $pageTitle = $id ? 'Editar Página' : 'Nova Página';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($pageTitle) ?> — Kallme Admin</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>admin/assets/admin.css">
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
-    <style>
-        .ql-editor { min-height: 320px; font-family: Georgia, serif; font-size: 16px; line-height: 1.7; background: #fff; color: #333; }
-        .ql-toolbar.ql-snow { background: #fff; border-color: #2a2a4a; border-radius: 8px 8px 0 0; }
-        .ql-container.ql-snow { border-color: #2a2a4a; border-radius: 0 0 8px 8px; }
-        .notice {
-            background: rgba(255, 200, 100, 0.15);
-            border: 1px solid rgba(255, 200, 100, 0.3);
-            color: #f0c674;
-            padding: 14px 18px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-    </style>
+    <script src="https://cdn.tiny.cloud/1/dkiaecki9zwrxev9ntxmp9vz6e5yj6yc1mzdb21kxoxrazl5/tinymce/6/tinymce.min.js"
+            referrerpolicy="origin"></script>
 </head>
 <body>
     <div class="admin-layout">
@@ -104,10 +89,6 @@ $pageTitle = $id ? 'Editar Página' : 'Nova Página';
                 <h1><?= e($pageTitle) ?></h1>
                 <a href="<?= BASE_URL ?>admin/pages.php" class="btn btn-secondary">← Voltar</a>
             </header>
-
-            <div class="notice">
-                ⚠ <strong>Versão transitória.</strong> O sistema editorial completo (com blocos modulares) será adicionado em breve. Por enquanto, apenas os campos básicos estão disponíveis.
-            </div>
 
             <?php if ($success): ?>
                 <div class="alert alert-success">Página salva com sucesso.</div>
@@ -155,8 +136,24 @@ $pageTitle = $id ? 'Editar Página' : 'Nova Página';
 
                             <div class="form-group">
                                 <label for="content">Conteúdo</label>
-                                <div id="editor-container"></div>
-                                <textarea id="content" name="content" style="display:none"><?= e($page['content'] ?? '') ?></textarea>
+
+                                <!-- Toolbar de blocos editoriais -->
+                                <div class="editorial-blocks-toolbar" id="editorial-blocks-toolbar">
+                                    <span class="toolbar-label">Inserir bloco:</span>
+                                    <button type="button" class="editorial-btn" data-block="image"     title="Imagem com legenda">🖼 Imagem</button>
+                                    <button type="button" class="editorial-btn" data-block="quote"     title="Citação destacada">❝ Citação</button>
+                                    <button type="button" class="editorial-btn" data-block="tip"       title="Caixa de dica (rosa)">💡 Dica</button>
+                                    <button type="button" class="editorial-btn" data-block="warning"   title="Caixa de atenção (amarela)">⚠ Atenção</button>
+                                    <button type="button" class="editorial-btn" data-block="list"      title="Lista com bullets">≡ Lista</button>
+                                    <button type="button" class="editorial-btn" data-block="gallery"   title="Galeria de 3 imagens">🖼🖼 Galeria</button>
+                                    <button type="button" class="editorial-btn" data-block="product"   title="Produto afiliado">🛒 Produto</button>
+                                    <button type="button" class="editorial-btn" data-block="highlight" title="Frase em destaque grande">★ Destaque</button>
+                                    <button type="button" class="editorial-btn" data-block="divider"   title="Divisor decorativo">— Divisor</button>
+                                    <button type="button" class="editorial-btn" data-block="table"     title="Tabela editorial">⊞ Tabela</button>
+                                </div>
+
+                                <textarea id="content" name="content"><?= e($page['content'] ?? '') ?></textarea>
+                                <small id="reading-time-display" style="color:#888;display:block;margin-top:6px;"></small>
                             </div>
                         </div>
 
@@ -191,8 +188,8 @@ $pageTitle = $id ? 'Editar Página' : 'Nova Página';
                             <div class="form-group">
                                 <label for="page_type">Tipo</label>
                                 <select id="page_type" name="page_type">
-                                    <option value="static" <?= ($page['page_type'] ?? 'static') === 'static' ? 'selected' : '' ?>>Estática</option>
-                                    <option value="article" <?= ($page['page_type'] ?? '') === 'article' ? 'selected' : '' ?>>Artigo</option>
+                                    <option value="article" <?= ($page['page_type'] ?? 'article') === 'article' ? 'selected' : '' ?>>📝 Artigo</option>
+                                    <option value="static" <?= ($page['page_type'] ?? '') === 'static' ? 'selected' : '' ?>>📄 Estática</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -202,16 +199,19 @@ $pageTitle = $id ? 'Editar Página' : 'Nova Página';
                                     <option value="en" <?= ($page['language'] ?? '') === 'en' ? 'selected' : '' ?>>English (en)</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="category">Categoria</label>
+                            <div class="form-group" id="category-group">
+                                <label for="category">Categoria <span style="color:#D03B47;">*</span></label>
                                 <select id="category" name="category">
-                                    <option value="">— Sem categoria —</option>
+                                    <option value="">— Selecione —</option>
                                     <?php foreach ($categories as $cat): ?>
                                         <option value="<?= e($cat['slug']) ?>" <?= ($page['category'] ?? '') === $cat['slug'] ? 'selected' : '' ?>>
                                             <?= e($cat['name_br']) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
+                                <small id="category-hint" style="display:none;color:#888;">
+                                    Páginas estáticas não têm categoria.
+                                </small>
                             </div>
                             <div class="form-group">
                                 <label for="publish_date">Data de Publicação</label>
@@ -264,47 +264,155 @@ $pageTitle = $id ? 'Editar Página' : 'Nova Página';
         </main>
     </div>
 
+    <script src="<?= BASE_URL ?>admin/assets/page-form.js"></script>
     <script>
-        const quill = new Quill('#editor-container', {
-            theme: 'snow',
-            placeholder: 'Conteúdo da página...',
-            modules: {
-                toolbar: [
-                    [{ 'header': [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'color': [] }, { 'background': [] }],
-                    [{ 'align': [] }],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    ['blockquote', 'link', 'image'],
-                    ['clean']
-                ]
+        tinymce.init({
+            selector: '#content',
+            height: 600,
+            menubar: false,
+            language: 'pt_BR',
+            language_url: 'https://cdn.tiny.cloud/1/dkiaecki9zwrxev9ntxmp9vz6e5yj6yc1mzdb21kxoxrazl5/tinymce/6/langs/pt_BR.js',
+
+            plugins: [
+                'lists', 'link', 'image', 'autolink', 'searchreplace',
+                'visualblocks', 'wordcount', 'code', 'fullscreen', 'help'
+            ],
+
+            // TOOLBAR NÍVEL MÉDIO (configurável depois pela Maíra)
+            toolbar: 'undo redo | blocks | bold italic underline | ' +
+                     'bullist numlist | link image blockquote | ' +
+                     'code fullscreen',
+
+            // Permitir classes/atributos dos blocos editoriais
+            valid_classes: {
+                '*': 'editorial-* article-*'
+            },
+
+            // Permitir HTML que TinyMCE removeria por padrão
+            extended_valid_elements: 'aside[class],figure[class],figcaption,' +
+                                     'blockquote[class|cite],cite,' +
+                                     'div[class],hr[class]',
+
+            paste_data_images: true,
+
+            // Estilo do conteúdo no editor (preview interno)
+            content_style: `
+                body {
+                    font-family: 'Inter', -apple-system, sans-serif;
+                    font-size: 16px;
+                    line-height: 1.7;
+                    color: #23314A;
+                    max-width: 720px;
+                    margin: 20px auto;
+                    padding: 20px;
+                }
+                h1, h2, h3, h4 {
+                    font-family: 'Playfair Display', serif;
+                    color: #23314A;
+                    margin-top: 28px;
+                }
+                p { margin: 16px 0; }
+
+                /* Preview dos blocos editoriais dentro do TinyMCE */
+                .editorial-quote {
+                    border-left: 4px solid #DB8084;
+                    padding: 20px 28px;
+                    font-style: italic;
+                    background: #F5E1DC;
+                    border-radius: 8px;
+                    font-family: 'Playfair Display', serif;
+                    margin: 24px 0;
+                }
+                .editorial-quote cite {
+                    display: block;
+                    margin-top: 10px;
+                    font-size: 13px;
+                    color: #7E8AA0;
+                }
+                .editorial-tip {
+                    background: #F5E1DC;
+                    border-left: 4px solid #DB8084;
+                    padding: 18px 22px;
+                    border-radius: 8px;
+                    margin: 20px 0;
+                }
+                .editorial-warning {
+                    background: #FFF3E0;
+                    border-left: 4px solid #E8A87C;
+                    padding: 18px 22px;
+                    border-radius: 8px;
+                    margin: 20px 0;
+                }
+                .editorial-product {
+                    background: #FAF6F0;
+                    border: 1px solid #E8DCD3;
+                    padding: 20px;
+                    border-radius: 12px;
+                    margin: 24px 0;
+                }
+                .editorial-highlight {
+                    font-family: 'Playfair Display', serif;
+                    font-size: 26px;
+                    text-align: center;
+                    color: #D03B47;
+                    margin: 32px 0;
+                    font-style: italic;
+                }
+                .editorial-divider {
+                    border: 0;
+                    height: 1px;
+                    background: #E8DCD3;
+                    margin: 36px auto;
+                    max-width: 200px;
+                }
+                .editorial-gallery {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                    gap: 12px;
+                    margin: 24px 0;
+                }
+                .editorial-gallery img { width: 100%; border-radius: 6px; }
+                .editorial-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                }
+                .editorial-table th,
+                .editorial-table td {
+                    padding: 10px 14px;
+                    border: 1px solid #E8DCD3;
+                }
+                .editorial-table th {
+                    background: #F5E1DC;
+                    font-family: 'Playfair Display', serif;
+                }
+            `,
+
+            // Hook ao mudar conteúdo: atualizar tempo de leitura
+            setup: function(editor) {
+                editor.on('input change', debounce(function() {
+                    if (typeof window.updateReadingTime === 'function') {
+                        window.updateReadingTime(editor.getContent({ format: 'text' }));
+                    }
+                }, 500));
+            },
+
+            // Carregar conteúdo existente ao iniciar (caso seja preciso via window.initialContent)
+            init_instance_callback: function(editor) {
+                if (typeof window.initialContent !== 'undefined') {
+                    editor.setContent(window.initialContent);
+                }
             }
         });
 
-        const contentTextarea = document.getElementById('content');
-        if (contentTextarea.value) {
-            quill.clipboard.dangerouslyPasteHTML(contentTextarea.value);
+        // Debounce utility (necessário pelo setup acima)
+        function debounce(fn, delay) {
+            let timer;
+            return function() {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn.apply(this, arguments), delay);
+            };
         }
-
-        document.getElementById('page-form').addEventListener('submit', function() {
-            contentTextarea.value = quill.root.innerHTML;
-        });
-
-        // Slug a partir do título
-        const titleInput = document.getElementById('title');
-        const slugInput = document.getElementById('slug');
-        let slugManual = !!slugInput.value;
-        slugInput.addEventListener('input', () => { slugManual = true; });
-        titleInput.addEventListener('input', () => {
-            if (slugManual) return;
-            slugInput.value = titleInput.value
-                .toLowerCase()
-                .normalize('NFD').replace(/[̀-ͯ]/g, '')
-                .replace(/[^a-z0-9\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-')
-                .replace(/^-|-$/g, '');
-        });
     </script>
 </body>
 </html>

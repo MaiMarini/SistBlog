@@ -21,9 +21,9 @@ Plataforma editorial em PHP/MySQL para um **blog público bilíngue** (BR/EN) so
 ### Lado admin (`/admin/`)
 1. **Painel restrito** com login + sessão + CSRF
 2. **Dashboard** com contagem de páginas
-3. **CRUD de páginas** (versão transitória — formulário de blocos modulares chega em breve)
+3. **CRUD de páginas** com validação de coerência (artigos exigem categoria, estáticas não têm)
 4. **Configurações globais** em 4 abas: Geral, Tracking Global, Redes Sociais, SEO
-5. **Editor Quill** rich text no campo de conteúdo
+5. **Editor TinyMCE 6** (Tiny Cloud) com toolbar de 10 blocos editoriais modulares (citação, dica, atenção, galeria, produto afiliado, etc.)
 6. **Sistema de categorias** bilíngue com 1h de cache
 
 ### Infraestrutura
@@ -64,14 +64,15 @@ kallme.online/
 │   ├── index.php                      # Dashboard
 │   ├── login.php / logout.php
 │   ├── pages.php                      # Lista de páginas
-│   ├── page-form.php                  # CRUD (versão transitória editorial)
+│   ├── page-form.php                  # CRUD editorial (TinyMCE 6 + blocos modulares)
 │   ├── page-delete.php
 │   ├── preview.php                    # Placeholder (preview reescrito junto com blocos modulares)
 │   ├── settings.php                   # 4 abas: Geral/Tracking/Social/SEO
 │   ├── includes/sidebar.php           # Sidebar do admin
 │   └── assets/
 │       ├── admin.css                  # Tema dark do painel
-│       └── admin.js
+│       ├── admin.js
+│       └── page-form.js               # Slug auto, toggle article/static, blocos editoriais
 │
 ├── pages/
 │   ├── br/                            # Páginas estáticas BR
@@ -153,7 +154,7 @@ kallme.online/
 
 - **Backend**: PHP 8+ (nativo, sem framework)
 - **Banco**: MySQL 8 (HostGator shared hosting)
-- **Editor admin**: Quill 2.x (rich text gratuito)
+- **Editor admin**: TinyMCE 6 via Tiny Cloud (chave API gratuita) + toolbar custom de blocos editoriais
 - **Ícones**: Phosphor Icons (peso light + regular, via CDN)
 - **Fontes**: Playfair Display (display) + Inter (body) via Google Fonts
 - **Hospedagem**: HostGator (cPanel + FTP + MySQL)
@@ -190,6 +191,6 @@ Detalhe completo em [docs/02-architecture.md](docs/02-architecture.md).
 
 ## 🧭 Roadmap
 
-- **Fase atual**: limpeza pós-presell concluída. CRUD básico de páginas funciona em modo transitório.
-- **Próxima fase**: sistema de blocos modulares de artigo (`templates/article.php` + editor visual no admin).
-- **Depois**: páginas de categoria (`pages/<lang>/_category.php`), listagem, busca, conteúdo EN.
+- **Fase atual**: editor com TinyMCE + blocos editoriais modulares (10 tipos) funcionando. Listing e dashboard com URL bilíngue. Validação de coerência page_type ⇄ category.
+- **Próxima fase**: templates públicos (`templates/article.php` + `templates/static.php`) que renderizam o HTML salvo + páginas de categoria (`pages/<lang>/_category.php`) com listagem.
+- **Depois**: busca pública, conteúdo EN, sistema de comentários reais.

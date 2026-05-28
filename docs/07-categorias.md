@@ -261,5 +261,4 @@ Para escala (muitas categorias), considerar agregar em uma query única com JOIN
 
 - **CRUD de categorias no admin** — hoje só via SQL
 - **Página de listagem de categoria** (`/br/<slug>`) — `pages/br/_category.php` ainda não existe; o router está preparado
-- **Páginas individuais de artigo** (`templates/article.php`) — quando começar a publicar conteúdo editorial
-- **`page_type = 'article'`** ainda não tem template dedicado; usa fallback (advertorial)
+- **Templates públicos** (`templates/article.php` + `templates/static.php`) — hoje, ao acessar uma página salva pelo banco, o router cai num placeholder. O conteúdo já está sendo persistido com classes `editorial-*` corretas; falta o template que envelopa esse HTML com header/footer/drawer

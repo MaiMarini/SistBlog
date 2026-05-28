@@ -2267,3 +2267,192 @@ main {
 body.menu-open {
     overflow: hidden;
 }
+
+/* ============================================
+   BLOCOS EDITORIAIS — SITE PÚBLICO
+   Inseridos pela toolbar do admin/page-form.php.
+   Devem ficar visualmente coerentes em qualquer template
+   que renderize $page['content'] como HTML.
+   ============================================ */
+
+/* --- Imagem com legenda --- */
+.editorial-image { margin: 32px 0; }
+.editorial-image img { width: 100%; border-radius: var(--radius-md); }
+.editorial-image figcaption {
+    font-style: italic;
+    text-align: center;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin-top: 8px;
+}
+
+/* --- Citação --- */
+.editorial-quote {
+    border-left: 4px solid var(--color-accent);
+    padding: 24px 32px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 20px;
+    color: var(--color-primary-dark);
+    margin: 32px 0;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-md);
+}
+.editorial-quote cite {
+    display: block;
+    margin-top: 12px;
+    font-size: 14px;
+    font-style: normal;
+    font-family: var(--font-body);
+    color: var(--color-text-secondary);
+}
+
+/* --- Dica (rosa) --- */
+.editorial-tip {
+    background: var(--color-bg-card);
+    border-left: 4px solid var(--color-accent);
+    padding: 20px 24px;
+    border-radius: var(--radius-md);
+    margin: 24px 0;
+}
+.editorial-tip strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-cta);
+    font-family: var(--font-display);
+}
+
+/* --- Atenção (laranja) --- */
+.editorial-warning {
+    background: #FFF3E0;
+    border-left: 4px solid #E8A87C;
+    padding: 20px 24px;
+    border-radius: var(--radius-md);
+    margin: 24px 0;
+}
+.editorial-warning strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #C66B2D;
+    font-family: var(--font-display);
+}
+
+/* --- Lista --- */
+.editorial-list { padding-left: 24px; margin: 20px 0; }
+.editorial-list li { margin: 8px 0; line-height: 1.7; }
+
+/* --- Galeria --- */
+.editorial-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+}
+.editorial-gallery figure { margin: 0; }
+.editorial-gallery img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+}
+.editorial-gallery figcaption {
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
+    color: var(--color-text-secondary);
+    margin-top: 4px;
+}
+
+/* --- Produto afiliado --- */
+.editorial-product {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 24px;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border-light);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    margin: 32px 0;
+}
+
+@media (max-width: 600px) {
+    .editorial-product { grid-template-columns: 1fr; }
+}
+
+.editorial-product__image img {
+    width: 100%;
+    border-radius: var(--radius-md);
+}
+.editorial-product__content h4 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    margin: 0 0 12px;
+    color: var(--color-primary-dark);
+}
+.editorial-product__price {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-cta);
+    margin: 16px 0;
+}
+.editorial-product__cta {
+    display: inline-block;
+    padding: 12px 24px;
+    background: var(--color-cta);
+    color: var(--color-bg-primary);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 600;
+}
+.editorial-product__cta:hover {
+    background: var(--color-cta-hover);
+}
+
+/* --- Frase em destaque --- */
+.editorial-highlight {
+    font-family: var(--font-display);
+    font-size: 28px;
+    text-align: center;
+    color: var(--color-cta);
+    margin: 40px 0;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* --- Divisor decorativo --- */
+.editorial-divider {
+    border: none;
+    height: 1px;
+    background: var(--color-border-light);
+    margin: 48px auto;
+    max-width: 200px;
+    position: relative;
+}
+.editorial-divider::before {
+    content: '❀';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-bg-primary);
+    padding: 0 12px;
+    color: var(--color-accent);
+}
+
+/* --- Tabela --- */
+.editorial-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 14px;
+}
+.editorial-table th,
+.editorial-table td {
+    padding: 12px 16px;
+    border: 1px solid var(--color-border-light);
+    text-align: left;
+}
+.editorial-table th {
+    background: var(--color-bg-card);
+    font-family: var(--font-display);
+    color: var(--color-primary-dark);
+}

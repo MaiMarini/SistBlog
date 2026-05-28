@@ -1,8 +1,6 @@
 # Guia do Painel Admin — Kallme
 
-Como usar o painel para criar páginas estáticas e artigos, configurar tracking global e gerenciar o site.
-
-> O sistema de páginas está em **modo transitório** após a remoção do legado página. O formulário atual permite criar/editar páginas com campos básicos (title, slug, content, excerpt, featured_image, SEO). O sistema editorial completo com blocos modulares chega em breve.
+Como usar o painel para criar artigos e páginas estáticas, inserir blocos editoriais, configurar tracking global e gerenciar o site.
 
 ---
 
@@ -33,13 +31,14 @@ A sidebar do admin tem 4 itens:
 
 ## 📊 Dashboard (`/admin/`)
 
-Tela inicial mostra:
-- **Total de Páginas** (todas)
+Cards no topo:
+- **Total de Páginas**
 - **Publicadas**
 - **Rascunhos**
-- **Páginas Recentes** (últimas 5)
 
-Atalho: "+ Nova Página" no topo direito.
+Tabela "Páginas Recentes" (últimas 5) com as mesmas colunas do listing — Título, URL bilíngue, Tipo (com categoria), Status, Data, Ações.
+
+Atalho: "+ Nova Página" no canto superior direito.
 
 ---
 
@@ -48,146 +47,148 @@ Atalho: "+ Nova Página" no topo direito.
 Tabela com todas as páginas (publicadas + rascunhos).
 
 **Colunas:**
-- Título
-- Slug (URL)
-- Template (structured, advertorial, blog-personal, landing)
-- Status (Publicada / Rascunho)
-- Data de criação
-- Ações: ✏️ Editar · 👁️ Ver (só publicadas) · 🗑️ Excluir
+- **Título**
+- **URL** — caminho bilíngue completo, ex.: `/br/croche/como-comecar` para artigos, `/br/sobre` para estáticas
+- **Tipo** — badge "📝 Artigo · Crochê" ou "📄 Estática"
+- **Status** — ✅ Publicada / 📝 Rascunho
+- **Idioma** — BR ou EN
+- **Data** — criação
+- **Ações** — ✏️ Editar · 👁️ Ver pública (só publicadas) · 🗑️ Excluir
 
 ---
 
 ## ➕ Criar / Editar Página
 
-Acesse via "+ Nova Página" ou clique em ✏️ na lista.
+Acesse via "+ Nova Página" no topo ou clique em ✏️ na lista.
 
-### Conteúdo principal (sempre visível)
+### Tipo de página (decisão #1)
+
+O select **Tipo** controla todo o resto do formulário:
+
+| Tipo | Quando usar | Campos obrigatórios |
+|------|-------------|---------------------|
+| 📝 **Artigo** (default) | Posts editoriais — receitas, tutoriais, resenhas | Título, slug, **categoria**, conteúdo |
+| 📄 **Estática** | Páginas institucionais — sobre, contato, termos | Título, slug, conteúdo |
+
+**Coerência automatica**:
+- **Artigo precisa de categoria.** Se você tentar salvar sem categoria, o backend recusa com mensagem clara.
+- **Estática nunca tem categoria.** Se mudar de artigo→estática, o campo categoria fica oculto e o valor é zerado no save (silenciosamente).
+- O **prefixo do slug** muda em tempo real conforme a escolha:
+  - Estática + idioma BR → `/br/`
+  - Artigo + idioma BR + categoria Crochê → `/br/croche/`
+
+### Conteúdo principal
 
 | Campo | Obrigatório | Notas |
 |-------|-------------|-------|
-| **Título** | Sim | Aparece como `<title>` e h1 do template |
-| **Subtítulo** | Não | Logo abaixo do título |
-| **Slug (URL)** | Sim | Auto-gerado a partir do título. URL final: `kallme.online/br/<slug>` ou `kallme.online/br/<categoria>/<slug>` |
+| **Título** | Sim | Aparece como `<title>` e h1 |
+| **Slug (URL)** | Sim | Auto-gerado a partir do título (acentos removidos). Você pode sobrescrever — uma vez editado manualmente, deixa de auto-gerar |
+| **Resumo (excerpt)** | Não | Texto curto que aparece em cards/listagens |
+| **Conteúdo** | Recomendado | Editor TinyMCE 6 + toolbar de blocos editoriais (ver abaixo) |
 
 ### Sidebar do form
 
 #### 📅 Publicação
-- **Status**: Rascunho / Publicada
-- **Data de Publicação**: exibida nos templates (pode ser fictícia)
-- **Botão "Criar/Atualizar Página"** — salva no banco
-- **Botão "👁️ Visualizar"** — preview em nova aba sem salvar
-
-#### 🎨 Template
-- **Estruturado (4 Seções)** — padrão, mais flexível
-- **Advertorial / Notícia** — formato editorial
-- **Blog Pessoal** — depoimento
-- **Landing Page** — comercial puro
-
-#### 🔗 Link de Afiliado
-- URL do afiliado
-- Texto do botão CTA (ex: "Compre Agora")
-- Cor do botão CTA (color picker + HEX)
-
-#### 👤 Autor
-- Nome (fictício)
-- Avatar (upload)
+- **Status** — Rascunho / Publicada
+- **Tipo** — 📝 Artigo / 📄 Estática (default: Artigo)
+- **Idioma** — Português (br) / English (en)
+- **Categoria** *** — visível só para artigos. Lista vinda da tabela `categories`
+- **Data de Publicação** — exibida nos templates (pode ser fictícia)
+- **Autor** — nome (fictício ou real)
+- **Tempo de leitura (min)** — preenchido manualmente; se vazio, o backend calcula automaticamente para artigos (250 palavras/min)
+- **Botão "Criar/Atualizar"** — salva no banco
 
 #### 🔍 SEO
-- Meta Title
-- Meta Description
+- **Meta Title**
+- **Meta Description**
 
-#### 📊 Código de Rastreamento
-Tags específicas desta página (Google Ads, Pixel, Pinterest tag, etc.) — coladas no formato completo (`<script>...</script>` ou `<meta>`). Injetadas no `<head>` da página.
+#### 📊 Tracking (só desta página)
+Tags específicas (Google Ads, Pixel, etc.) coladas no formato completo (`<script>...</script>`). Injetadas no `<head>` desta página.
 
-> Trackings **globais** (que se aplicam em todas as páginas) ficam em `/admin/settings.php` aba **Tracking Global**.
+> Trackings **globais** (que se aplicam em todas as páginas) ficam em `/admin/settings.php` → aba **Tracking Global**.
 
----
+### 🖼 Imagem destacada (Featured Image)
 
-### Campos do Template "Estruturado"
-
-#### 1. Cabeçalho
-- Tipo de fundo: Sólido / Linear gradient / Radial gradient
-- Direção (se gradient): `to bottom`, `to right`, etc.
-- Cor 1, 2, 3 (gradient stops ou cor sólida)
-- Texto Acima da Imagem (Quill rich text)
-- Imagem do Cabeçalho
-- Texto Abaixo da Imagem (Quill rich text)
-
-#### 2. Conteúdo 1 (texto + imagem)
-- Texto à esquerda (Quill)
-- Imagem à direita
-- Imagem de fundo (opcional, atrás de tudo)
-- Cor de fundo (fallback)
-
-#### 3. Conteúdo 2 (galeria + CTA)
-- Até 5 imagens em grid responsivo
-- Texto (Quill)
-- Texto do CTA / Cor de fundo do CTA / Cor do texto do CTA
-- Imagem de fundo (opcional)
-- Cor de fundo (fallback)
-
-#### 4. Rodapé
-- Cor de fundo
-- Texto de Alertas (Quill) — disclaimers
-- 3 Botões: cada um com texto + URL
-- Cor do Texto dos Botões / Tamanho (10-24px)
+Card separado abaixo do conteúdo. Aceita JPG/PNG/GIF/WebP, máximo 5MB. Aparece como capa do artigo e em cards do blog.
 
 ---
 
-## ✍️ Usando o editor Quill
+## ✍️ Editor TinyMCE
 
-Toolbar de cada campo de texto rich:
+O conteúdo é editado em **TinyMCE 6** (carregado via Tiny Cloud com chave da conta gratuita registrada).
 
-- **Cor do Texto (HEX)** — botão `A#` — abre prompt para hex
-- **Cor de Fundo do Texto (HEX)** — botão `🖌#` — idem
-- **Fonte** — 19 opções (Arial, Georgia, Roboto, Open Sans, Playfair Display, ...)
-- **Tamanho** — por px, 8px → 96px
-- **Cabeçalho** — H1, H2, H3
-- **Negrito / Itálico / Sublinhado / Tachado**
-- **Cor / Background** (paleta padrão)
-- **Alinhamento** — esquerda, centro, direita, justificado
-- **Listas** — ordenada / não ordenada
-- **Citação / Link**
-- **Limpar formatação**
+### Toolbar nativa
+- Undo / Redo
+- Blocks (parágrafo / H1 / H2 / H3)
+- Bold / Italic / Underline
+- Listas (ordenada / não ordenada)
+- Link / Image / Blockquote
+- View source (`code`)
+- Fullscreen
 
-### Colar texto sem trazer formatação ruim
+### Preview interno
+O editor já estiliza os blocos editoriais **dentro do editor** (via `content_style`), então você vê quase o mesmo visual que sairá no site público.
 
-O Quill remove automaticamente `background-color` de conteúdo colado (de Word, Google Docs, sites) para evitar blocos brancos atrás do texto.
+---
+
+## 🧱 Blocos editoriais modulares
+
+Acima do editor há uma **toolbar rosa-pêssego** com 10 botões. Cada um insere um bloco pré-formatado no cursor do TinyMCE:
+
+| Botão | Bloco | Classe HTML | Quando usar |
+|-------|-------|-------------|-------------|
+| 🖼 Imagem | `<figure class="editorial-image">` | Imagem com legenda em itálico |
+| ❝ Citação | `<blockquote class="editorial-quote">` | Citação destacada com fonte (cite) |
+| 💡 Dica | `<aside class="editorial-tip">` | Caixa rosa pétala com dica útil |
+| ⚠ Atenção | `<aside class="editorial-warning">` | Caixa laranja com aviso/cuidado |
+| ≡ Lista | `<ul class="editorial-list">` | Lista com bullets espaçados |
+| 🖼🖼 Galeria | `<div class="editorial-gallery">` | Grid responsivo de 3 imagens com legenda |
+| 🛒 Produto | `<div class="editorial-product">` | Card de produto afiliado (imagem + título + preço + CTA `rel="sponsored noopener"`) |
+| ★ Destaque | `<p class="editorial-highlight">` | Frase grande em Playfair vermelha, centralizada |
+| — Divisor | `<hr class="editorial-divider">` | Linha bege com ❀ no centro |
+| ⊞ Tabela | `<table class="editorial-table">` | Tabela 2×3 com cabeçalho rosa |
+
+### Fluxo recomendado para um artigo
+
+1. Escreva os parágrafos no editor normalmente
+2. Onde quiser variar o ritmo, clique no botão do bloco
+3. O HTML é inserido + um `<p></p>` vazio depois (cursor sai pronto pra continuar)
+4. Edite os placeholders (textos, src de imagens, links, preços)
+5. Você pode editar o HTML cru a qualquer momento pelo botão **`<>`** (code) da toolbar do TinyMCE
+
+### Imagens nos blocos
+
+Os templates de imagem apontam por padrão para:
+- `/assets/img/articles/exemplo.jpg` (imagem isolada e galeria)
+- `/assets/img/products/exemplo.jpg` (bloco de produto)
+
+Você precisa subir as imagens reais via cPanel → Gerenciador de Arquivos (para `assets/img/articles/` ou `assets/img/products/`) e atualizar o `src` na hora de editar. Não há uploader integrado no bloco ainda — o uploader do TinyMCE (botão **image** na toolbar) usa o painel padrão dele, que aceita URL ou upload base64 inline.
+
+### Tempo de leitura ao vivo
+
+Embaixo do editor um pequeno texto cinza mostra **"Tempo estimado: X min (Y palavras)"** atualizado a cada 500ms enquanto você digita. O valor salvo no banco é calculado no backend no momento do save (200-250 palavras/min) — o display é só visual.
 
 ---
 
 ## 🖼 Upload de imagens
 
+### Imagem destacada (campo dedicado)
 - Aceita: **JPG, PNG, GIF, WebP**
-- Tamanho máximo: **5MB**
-- Recomendado: **< 200KB** (use [TinyPNG](https://tinypng.com))
+- Tamanho máximo: **5 MB**
+- Recomendado: **< 200 KB** (use [TinyPNG](https://tinypng.com))
+- Imagens vão para `uploads/` com nome aleatório
 
-Imagens vão para `uploads/` com nome aleatório. Caminho salvo é relativo.
-
----
-
-## 💬 Comentários fictícios
-
-Em cada página, card "Comentários Fictícios":
-1. Clique em "+ Adicionar"
-2. Preencha Nome, Data (`dd/mm/aaaa`), Texto
-3. Repita
-
-Salvos como JSON, renderizados nos templates Advertorial/Blog/Landing.
+### Imagens dentro do conteúdo
+- Via toolbar do TinyMCE (botão **image**) → cole URL ou faça upload (Tiny salva inline base64)
+- Para imagens nos blocos editoriais: suba via cPanel em `assets/img/articles/` ou `assets/img/products/` e referencie pelo caminho
 
 ---
 
-## 👁️ Preview
+## 👁 Preview
 
-Botão **"👁️ Visualizar"** na sidebar do form.
+`admin/preview.php` ainda é placeholder. O preview "ao vivo" hoje é o próprio editor do TinyMCE — o `content_style` já estiliza os blocos editoriais visualmente próximos do que sairá no front.
 
-- Abre em **nova aba**
-- Renderiza o template com **dados atuais do form** (incluindo uploads novos)
-- **Não salva no banco**
-- Funciona mesmo se ainda não publicou
-- Usa `uploads/preview/` (limpa essa pasta no início)
-
-Use sempre antes de publicar.
+Um preview de página final (com header/drawer/footer) só virá depois que `templates/article.php` e `templates/static.php` existirem.
 
 ---
 
@@ -195,8 +196,9 @@ Use sempre antes de publicar.
 
 Botão 🗑️ na lista → pede confirmação. Remove:
 - Registro do banco
-- Imagens associadas (main_image, author_avatar)
-- **Invalida cache** de categorias automaticamente
+- **Invalida cache** de categorias automaticamente (a próxima visita ao site regenera)
+
+> Imagens em `uploads/` não são deletadas junto — ficam órfãs no servidor. Limpar manualmente via cPanel quando precisar.
 
 ---
 
@@ -211,7 +213,7 @@ Tela em **4 abas** (deep-link via hash: `#general`, `#tracking`, `#social`, `#se
 - Idioma padrão (br/en)
 
 ### Aba "📊 Tracking Global"
-Códigos que entram no `<head>` de **todas as páginas estáticas e artigos** (páginas continuam com seu `tracking_code` próprio):
+Códigos que entram no `<head>` de **todas as páginas** (páginas continuam com seu `tracking_code` próprio):
 - Google Analytics 4 (gtag)
 - Google Ads (gtag)
 - Pinterest Tag
@@ -231,25 +233,27 @@ Meta descriptions padrão por idioma (usadas quando uma página não tem meta de
 
 ---
 
-## 🎯 Fluxo recomendado para criar uma página
+## 🎯 Fluxo recomendado para criar um artigo
 
-1. Crie em **Rascunho** primeiro
-2. Preencha tudo, faça upload das imagens
-3. Use **Visualizar** para conferir
-4. Ajuste o que precisar
-5. Mude status para **Publicada**
-6. Salve
-7. Acesse `kallme.online/br/<seu-slug>` para conferir ao vivo
-8. Compartilhe o link nas campanhas
+1. **Nova Página** → confirme que o tipo está em "📝 Artigo" (default)
+2. Escolha **categoria** (obrigatória pra artigos) — `/br/<categoria>/` aparece no prefixo do slug ao vivo
+3. Preencha **título** → slug é gerado sozinho
+4. Suba a **imagem destacada**
+5. Escreva o corpo no TinyMCE; vá inserindo **blocos editoriais** onde fizer sentido (citação, dica, galeria, produto afiliado)
+6. Preencha **resumo (excerpt)**, **SEO** e **autor**
+7. Crie em **Rascunho** primeiro, salve, confira no editor que tudo está coerente
+8. Mude para **Publicada** e salve de novo
+9. Acesse `kallme.online/br/<categoria>/<slug>` para conferir ao vivo (Ctrl+Shift+R)
+10. Compartilhe o link
 
 ---
 
 ## ⚠️ Boas práticas
 
-- **Slug**: prefira slugs curtos e legíveis (`brain-song-review` > `produto-incrivel-2026-melhor`)
-- **Imagens**: comprima antes do upload, alvo < 200KB
-- **CTA**: verbos de ação ("Compre Agora", "Garanta o Seu" — não "Saiba Mais")
-- **Cores**: respeite o design system da campanha (não misture paletas)
+- **Slug**: prefira slugs curtos e legíveis (`tomate-cereja-vaso` > `como-plantar-tomate-cereja-em-vaso-no-apartamento`)
+- **Categoria**: cada artigo numa categoria só — o slug fica `/<cat>/<artigo>`, não há multi-categoria
+- **Imagens**: comprima antes do upload, alvo < 200 KB; suba pra `/assets/img/articles/` para reuso entre artigos
+- **CTA em bloco Produto**: verbos de ação ("Ver na loja", "Comprar agora" — não "Saiba mais"). Lembrar de manter `rel="sponsored noopener"` (já vem no template)
 - **SEO**: meta_title 50-60 chars, meta_description 140-160 chars
 - **Tracking**: teste com Pixel Helper / Tag Assistant após publicar
 
@@ -285,3 +289,16 @@ O drawer do site público usa um cache de **1 hora** com a contagem de artigos p
 Não precisa fazer nada manualmente — apenas saiba que a 1ª visita ao site após uma alteração pode ser ligeiramente mais lenta (regenera o cache). As próximas são instantâneas.
 
 Para forçar invalidação manual: delete `/tmp/kallme_categories_cache.json` no servidor via Gerenciador de Arquivos do cPanel.
+
+---
+
+## 🔑 Chave do TinyMCE
+
+O editor usa a **Tiny Cloud** (versão gratuita até 1000 carregamentos/dia, sem cartão). A chave atual está hardcoded em [admin/page-form.php](../admin/page-form.php) (linhas do `<script src>` e do `language_url`).
+
+Se precisar trocar (limite atingido, nova conta, etc.):
+1. Pegue a chave em https://www.tiny.cloud/my-account/
+2. Substituir os dois lugares onde aparece (script src + language_url)
+3. Deploy (`bash deploy.sh`)
+
+> Para endurecer segurança: no painel da Tiny Cloud, registre `kallme.online` em **Approved domains** — o editor só carrega se o `Referer` bater.

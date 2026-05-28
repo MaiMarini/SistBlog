@@ -1,10 +1,10 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/categories.php';
 requireLogin();
 
 $pages = getAllPages();
-$templates = getTemplates();
 
 $msg = $_GET['msg'] ?? '';
 $activePage = 'pages';
@@ -48,38 +48,61 @@ $activePage = 'pages';
                         <thead>
                             <tr>
                                 <th>Título</th>
-                                <th>Slug</th>
-                                <th>Template</th>
+                                <th>URL</th>
+                                <th>Tipo</th>
                                 <th>Status</th>
+                                <th>Idioma</th>
                                 <th>Data</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($pages as $page): ?>
+                                <?php
+                                    // Monta a URL pública conforme tipo + idioma + categoria
+                                    $publicUrl = BASE_URL . $page['language'] . '/';
+                                    if ($page['page_type'] === 'article' && !empty($page['category'])) {
+                                        $publicUrl .= $page['category'] . '/';
+                                    }
+                                    $publicUrl .= $page['slug'];
+
+                                    // Caminho legível (igual ao publicUrl mas sem BASE_URL)
+                                    $urlPath = '/' . $page['language'] . '/'
+                                             . (($page['page_type'] === 'article' && !empty($page['category']))
+                                                 ? $page['category'] . '/'
+                                                 : '')
+                                             . $page['slug'];
+
+                                    // Label do tipo (com categoria pra artigos)
+                                    $typeLabel = $page['page_type'] === 'article' ? '📝 Artigo' : '📄 Estática';
+                                    if ($page['page_type'] === 'article' && !empty($page['category'])) {
+                                        $catData = getCategoryBySlug($page['category']);
+                                        if ($catData) {
+                                            $typeLabel .= ' · ' . e($catData['name_br'] ?? $page['category']);
+                                        }
+                                    }
+                                ?>
                                 <tr>
                                     <td><strong><?= e($page['title']) ?></strong></td>
-                                    <td><code>/<?= e($page['slug']) ?></code></td>
-                                    <td><span
-                                            class="badge badge-template"><?= e($templates[$page['template']] ?? $page['template']) ?></span>
-                                    </td>
+                                    <td><code><?= e($urlPath) ?></code></td>
+                                    <td><span class="badge badge-type"><?= $typeLabel ?></span></td>
                                     <td>
-                                        <span
-                                            class="badge <?= $page['status'] === 'published' ? 'badge-success' : 'badge-warning' ?>">
-                                            <?= $page['status'] === 'published' ? 'Publicada' : 'Rascunho' ?>
+                                        <span class="badge <?= $page['status'] === 'published' ? 'badge-success' : 'badge-warning' ?>">
+                                            <?= $page['status'] === 'published' ? '✅ Publicada' : '📝 Rascunho' ?>
                                         </span>
                                     </td>
+                                    <td><?= strtoupper(e($page['language'])) ?></td>
                                     <td><?= date('d/m/Y', strtotime($page['created_at'])) ?></td>
                                     <td class="actions">
                                         <a href="<?= BASE_URL ?>admin/page-form.php?id=<?= $page['id'] ?>"
-                                            class="btn btn-sm btn-edit" title="Editar">✏️</a>
+                                           class="btn btn-sm btn-edit" title="Editar">✏️</a>
                                         <?php if ($page['status'] === 'published'): ?>
-                                            <a href="<?= BASE_URL . $page['slug'] ?>" target="_blank" class="btn btn-sm btn-view"
-                                                title="Ver">👁️</a>
+                                            <a href="<?= e($publicUrl) ?>" target="_blank"
+                                               class="btn btn-sm btn-view" title="Ver pública">👁️</a>
                                         <?php endif; ?>
                                         <a href="<?= BASE_URL ?>admin/page-delete.php?id=<?= $page['id'] ?>"
-                                            class="btn btn-sm btn-delete" title="Excluir"
-                                            onclick="return confirm('Tem certeza que deseja excluir esta página?')">🗑️</a>
+                                           class="btn btn-sm btn-delete" title="Excluir"
+                                           onclick="return confirm('Tem certeza que deseja excluir esta página?')">🗑️</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

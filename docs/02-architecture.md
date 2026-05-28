@@ -118,7 +118,7 @@ Após a remoção do sistema presell, a tabela tem só campos universais (identi
 | `id` | INT AUTO_INCREMENT PK | — | |
 | `title` | VARCHAR(255) | — | Título principal |
 | `slug` | VARCHAR(255) | — | URL (`/lang/slug` ou `/lang/cat/slug`) |
-| `content` | LONGTEXT | NULL | Corpo (HTML do Quill) |
+| `content` | LONGTEXT | NULL | Corpo (HTML do TinyMCE; aceita blocos editoriais via classes `editorial-*`) |
 | `status` | ENUM('draft','published') | 'draft' | |
 | `language` | VARCHAR(5) | 'br' | 'br' \| 'en' |
 | `page_type` | ENUM('article','static') | 'static' | Tipo da página |
@@ -208,9 +208,9 @@ CREATE TABLE settings (
 | `savePage($data, $id)` | Insert/update (whitelist de campos) |
 | `deletePage($id)` | Remove página |
 | `countPages()` | Stats (total/published/draft) |
-| `buildPageDataFromPost($post, $files, &$errors)` | Constrói `$data` para `savePage` a partir do form |
+| `buildPageDataFromPost($post, $files, &$errors)` | Constrói `$data` para `savePage`. Inclui validação de coerência: `static` zera `category`; `article` exige `category` (acrescenta erro se vazio) |
 | `e($value)` | `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')` |
-| `getTemplates()` | Lista de variantes de hero para artigos (`hero-classic`, `hero-side`, `hero-minimal`) |
+| `getTemplates()` | Lista de variantes de hero (`hero-classic`, `hero-side`, `hero-minimal`). **Helper legado** — não consumido pelo admin atual, mantido enquanto a coluna `pages.template` existir |
 
 ### `includes/auth.php`
 
@@ -297,6 +297,6 @@ CREATE TABLE settings (
 
 ## 👁 Preview no admin
 
-O preview foi temporariamente removido junto com o sistema presell legado. Será reescrito quando o sistema editorial de blocos modulares estiver no ar.
+`admin/preview.php` ainda é um placeholder. O editor de blocos editoriais (TinyMCE) já renderiza um preview interno via `content_style` — visualmente próximo do que sairá no front, mas sem o chrome do site (header/footer/drawer).
 
-`admin/preview.php` mostra apenas um placeholder explicando o estado atual.
+Um preview de "página final" só será implementado depois que `templates/article.php` e `templates/static.php` existirem — aí o preview vai chamar o template real com `$page` populado pelos campos do form (sem persistir no banco).

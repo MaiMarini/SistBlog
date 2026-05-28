@@ -235,6 +235,17 @@ function buildPageDataFromPost(array $post, array $files, array &$errors = []): 
         $data['reading_time'] = null;
     }
 
+    // Coerência page_type ⇄ category:
+    //   - static: nunca tem categoria (zera silenciosamente se vier do POST)
+    //   - article: precisa de categoria (erro de validação se faltar)
+    if ($data['page_type'] === 'static') {
+        $data['category'] = null;
+    } else {
+        if (empty($data['category'])) {
+            $errors[] = 'Artigos precisam de categoria. Selecione uma categoria ou marque como Estática.';
+        }
+    }
+
     return $data;
 }
 
