@@ -13,9 +13,10 @@
 
 $lang = $lang ?? 'br';
 
-// Categorias vêm do banco (schema bilíngue) com contagem de artigos.
-// A disponibilidade (link ativo vs "em breve") é calculada por idioma.
-$drawerCats = getCategoriesWithArticleCount();
+// Categorias vêm do banco (schema bilíngue) com contagem de conteúdo
+// (artigos + receitas + guia de pontos no crochê). A disponibilidade
+// (link ativo vs "em breve") é calculada por idioma.
+$drawerCats = getCategoriesWithContentCount();
 
 // Labels por idioma
 $navTitle = $lang === 'en' ? 'Navigation' : 'Navegação';
@@ -53,12 +54,12 @@ $comingSoon = $lang === 'en' ? 'soon' : 'em breve';
                 $name = ($lang === 'en' && !empty($cat['name_en'])) ? $cat['name_en'] : $cat['name_br'];
                 ?>
                 <?php if ($isAvailable): ?>
-                    <a href="<?= e(url($cat['slug'], $lang)) ?>">
+                    <a class="drawer__category" href="<?= e(url($cat['slug'], $lang)) ?>">
                         <?= renderCategoryIcon($cat, 'icon-sm') ?>
                         <span><?= e($name) ?></span>
                     </a>
                 <?php else: ?>
-                    <span class="drawer__category-placeholder">
+                    <span class="drawer__category drawer__category-placeholder">
                         <?= renderCategoryIcon($cat, 'icon-sm') ?>
                         <span><?= e($name) ?></span>
                         <small class="drawer__coming-soon"><?= e($comingSoon) ?></small>

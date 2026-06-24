@@ -73,17 +73,20 @@ $activePage = 'dashboard';
                             <?php foreach ($recentPages as $page): ?>
                                 <?php
                                     // Monta URL pública bilíngue (mesma lógica de admin/pages.php)
-                                    $urlPath = '/' . $page['language'] . '/';
-                                    if ($page['page_type'] === 'article' && !empty($page['category'])) {
-                                        $urlPath .= $page['category'] . '/';
-                                    }
-                                    $urlPath .= $page['slug'];
-
+                                    $hasCatPrefix = in_array($page['page_type'], ['article', 'recipe'], true) && !empty($page['category']);
+                                    $urlPath = '/' . $page['language'] . '/'
+                                             . ($hasCatPrefix ? $page['category'] . '/' : '')
+                                             . $page['slug'];
                                     $publicUrl = BASE_URL . ltrim($urlPath, '/');
 
-                                    // Label do tipo (com categoria pra artigos)
-                                    $typeLabel = $page['page_type'] === 'article' ? '📝 Artigo' : '📄 Estática';
-                                    if ($page['page_type'] === 'article' && !empty($page['category'])) {
+                                    // Label do tipo (com categoria pra artigos/receitas)
+                                    $typeLabel = match ($page['page_type']) {
+                                        'article' => '📝 Artigo',
+                                        'recipe'  => '🧶 Receita',
+                                        'static'  => '📄 Estática',
+                                        default   => e($page['page_type']),
+                                    };
+                                    if ($hasCatPrefix) {
                                         $catData = getCategoryBySlug($page['category']);
                                         if ($catData) {
                                             $typeLabel .= ' · ' . e($catData['name_br'] ?? $page['category']);

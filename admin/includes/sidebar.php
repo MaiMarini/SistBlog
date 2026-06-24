@@ -6,7 +6,7 @@
  * $activePage definida pelo arquivo que inclui esta sidebar.
  *
  * Valores aceitos para $activePage:
- *   'dashboard' | 'pages' | 'new-page' | 'settings'
+ *   'dashboard' | 'pages' | 'new-page' | 'categories' | 'stitches' | 'settings'
  *
  * Como usar em uma página admin:
  *   $activePage = 'pages';
@@ -28,6 +28,12 @@ $activePage = $activePage ?? '';
         </a>
         <a href="<?= BASE_URL ?>admin/page-form.php" class="nav-item <?= $activePage === 'new-page' ? 'active' : '' ?>">
             <span class="nav-icon">➕</span> Nova Página
+        </a>
+        <a href="<?= BASE_URL ?>admin/categories.php" class="nav-item <?= $activePage === 'categories' ? 'active' : '' ?>">
+            <span class="nav-icon">🏷️</span> Categorias
+        </a>
+        <a href="<?= BASE_URL ?>admin/stitches.php" class="nav-item <?= $activePage === 'stitches' ? 'active' : '' ?>">
+            <span class="nav-icon">🧶</span> Glossário de Pontos
         </a>
         <a href="<?= BASE_URL ?>admin/settings.php" class="nav-item <?= $activePage === 'settings' ? 'active' : '' ?>">
             <span class="nav-icon">⚙️</span> Configurações

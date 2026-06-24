@@ -476,6 +476,251 @@ body {
 }
 
 /* ============================================
+   BLOCOS EDITORIAIS DE RECEITA — CARDS COLAPSÁVEIS
+   (passos + dicas/alertas/importante)
+   ============================================ */
+.blocks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.collapse-card {
+    background: #FFFFFF;
+    border: 1px solid #E8DCD3;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.collapse-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #FAF6F0;
+    cursor: pointer;
+    border-bottom: 1px solid #E8DCD3;
+    font-size: 14px;
+    color: #23314A;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.collapse-card:not(.open) .collapse-card__header {
+    border-bottom: none;
+}
+
+.collapse-card__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.collapse-card__title strong {
+    color: #23314A;
+}
+
+.collapse-card__title .chevron {
+    color: #7E8AA0;
+    font-size: 11px;
+    transition: transform 0.2s;
+}
+
+.collapse-card:not(.open) .collapse-card__title .chevron {
+    transform: rotate(-90deg);
+}
+
+.collapse-card__title .line-count,
+.collapse-card__title .section-name-preview,
+.collapse-card__title .tip-type-preview {
+    color: #7E8AA0;
+    font-size: 13px;
+}
+
+.collapse-card__controls {
+    display: flex;
+    gap: 4px;
+}
+
+.collapse-card__controls button {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #E8DCD3;
+    background: #FFFFFF;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #23314A;
+    padding: 0;
+    line-height: 1;
+}
+
+.collapse-card__controls button:hover {
+    background: #DB8084;
+    color: #FFFFFF;
+    border-color: #DB8084;
+}
+
+.collapse-card__body {
+    padding: 12px 16px 4px;
+    background: #FFFFFF;
+}
+
+.collapse-card:not(.open) .collapse-card__body {
+    display: none;
+}
+
+.collapse-card__body label {
+    color: #23314A !important;
+}
+
+.collapse-card__body textarea {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 13px;
+}
+
+/* ============================================
+   LISTA DE PONTOS NO FORM DE RECEITA
+   ============================================ */
+.stitches-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.stitch-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #FAF6F0;
+    border: 1px solid #E8DCD3;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.stitch-item.is-checked {
+    background: #F5E1DC;
+    border-color: #DB8084;
+}
+
+.stitch-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #D03B47;
+}
+
+.stitch-item__label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    cursor: pointer;
+    margin: 0;
+    text-transform: none;
+    letter-spacing: 0;
+    color: #23314A;
+}
+
+.stitch-item__icon {
+    width: 32px;
+    height: 32px;
+    color: #23314A;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stitch-item__icon svg,
+.stitch-item__icon .stitch-icon-svg,
+.stitch-item__icon img {
+    width: 100%;
+    height: 100%;
+}
+
+.stitch-item__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stitch-item__info strong {
+    font-size: 14px;
+    color: #23314A;
+    font-weight: 600;
+}
+
+.stitch-item__info code {
+    font-size: 11px;
+    color: #7E8AA0;
+    font-family: monospace;
+}
+
+.stitch-item__controls {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.stitch-item__controls button {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #E8DCD3;
+    background: #FFF;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #23314A;
+    transition: all 0.15s;
+    padding: 0;
+    line-height: 1;
+}
+
+.stitch-item__controls button:hover {
+    background: #DB8084;
+    color: white;
+    border-color: #DB8084;
+}
+
+/* === Ícone de ponto de crochê (SVG inline ou img fallback) === */
+.stitch-icon-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    color: currentColor;
+    fill: currentColor;
+}
+
+.stitch-icon-missing {
+    display: inline-block;
+    font-size: 28px;
+    color: #ccc;
+}
+
+/* === Row de 2 colunas dentro de form-group (ex.: name_br + name_en) === */
+.form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 0 20px 18px;
+}
+
+.form-row-2 .form-group {
+    padding: 0;
+}
+
+@media (max-width: 600px) {
+    .form-row-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================
    TOOLBAR DE BLOCOS EDITORIAIS (page-form)
    ============================================ */
 .editorial-blocks-toolbar {
@@ -589,4 +834,413 @@ body {
     .stats-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ============================================================
+   FIX: contraste dos inputs dentro de .collapse-card__body
+   O admin é dark mas os cards colapsáveis têm body branco —
+   os inputs herdavam o tema dark e ficavam ilegíveis.
+   ============================================================ */
+.collapse-card__body input[type="text"],
+.collapse-card__body input[type="number"],
+.collapse-card__body input[type="email"],
+.collapse-card__body input[type="url"],
+.collapse-card__body textarea,
+.collapse-card__body select {
+    background: #FFFFFF !important;
+    color: #23314A !important;
+    border: 1px solid #E8DCD3;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    width: 100%;
+}
+
+.collapse-card__body textarea {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    line-height: 1.7;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.collapse-card__body input:focus,
+.collapse-card__body textarea:focus,
+.collapse-card__body select:focus {
+    outline: none;
+    border-color: #DB8084;
+    box-shadow: 0 0 0 3px rgba(219, 128, 132, 0.15);
+}
+
+.collapse-card__body label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    color: #7E8AA0;
+    margin-bottom: 6px;
+}
+
+.collapse-card__body .form-group {
+    margin-bottom: 14px;
+}
+
+.collapse-card__body .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.collapse-card__body small {
+    display: block;
+    margin-top: 4px;
+    color: #888;
+    font-size: 12px;
+}
+
+.collapse-card__body code {
+    background: #FAF6F0;
+    color: #D03B47;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* ============================================================
+   UPLOAD DE FOTO DA SEÇÃO (steps)
+   ============================================================ */
+.photo-upload-wrapper {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 14px;
+    align-items: start;
+}
+
+.photo-preview {
+    width: 120px;
+    height: 120px;
+    border: 2px dashed #E8DCD3;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FAF6F0;
+    overflow: hidden;
+}
+
+.photo-preview.has-photo {
+    border-style: solid;
+    border-color: #DB8084;
+}
+
+.photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-placeholder {
+    font-size: 12px;
+    color: #888;
+}
+
+.photo-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+/* Sobrescreve o .btn .btn-secondary do tema dark do admin —
+   no contexto claro do upload precisa de fundo creme + texto navy. */
+.btn-photo-pick {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: #FAF6F0 !important;
+    color: #23314A !important;
+    border: 1px solid #E8DCD3 !important;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+    text-align: center;
+}
+
+.btn-photo-pick:hover {
+    background: #DB8084 !important;
+    color: #FFFFFF !important;
+    border-color: #DB8084 !important;
+}
+
+.btn-photo-pick input[type="file"] {
+    display: none;
+}
+
+.btn-photo-remove,
+.btn-danger {
+    background: #FFFFFF !important;
+    color: #C53030 !important;
+    border: 1px solid #FCC !important;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+}
+
+.btn-photo-remove:hover,
+.btn-danger:hover {
+    background: #FFEBEB !important;
+    color: #A02020 !important;
+}
+
+.photo-status {
+    font-size: 12px;
+    color: #888;
+    font-style: italic;
+}
+
+/* ============================================================
+   STEP PHOTOS — GALERIA NO ADMIN
+   ============================================================ */
+.step-photos-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.step-photo-item {
+    background: #FFFFFF;
+    border: 1px solid #E8DCD3;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.step-photo-number {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    background: #D03B47;
+    color: #FFFFFF;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.step-photo-preview {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 2px dashed #E8DCD3;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FAF6F0;
+    overflow: hidden;
+}
+
+.step-photo-preview.has-photo {
+    border-style: solid;
+    border-color: #DB8084;
+}
+
+.step-photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.step-photo-caption {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #E8DCD3;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: inherit;
+    color: #23314A;
+    background: #FFFFFF;
+}
+
+.step-photo-controls {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-icon {
+    width: 26px;
+    height: 26px;
+    border: 1px solid #E8DCD3;
+    background: #FFFFFF;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    color: #23314A;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.btn-icon:hover {
+    background: #DB8084;
+    color: #FFFFFF;
+    border-color: #DB8084;
+}
+
+/* ============================================================
+   COLOR GUIDE — ADMIN
+   ============================================================ */
+.color-guide-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.color-item {
+    display: grid;
+    grid-template-columns: 50px 1fr 1fr 32px;
+    gap: 10px;
+    align-items: center;
+    background: #FFFFFF;
+    border: 1px solid #E8DCD3;
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+
+.color-picker {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #E8DCD3;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 2px;
+    background: #FFFFFF;
+}
+
+.color-item input[type="text"] {
+    padding: 8px 10px;
+    border: 1px solid #E8DCD3;
+    border-radius: 4px;
+    font-size: 13px;
+    background: #FFFFFF;
+    color: #23314A;
+}
+
+/* ============================================================
+   FOTO DO PONTO — upload AJAX no stitch-form (R-A3)
+   ============================================================ */
+.photo-dropzone {
+    margin: 0 20px;
+    border: 2px dashed #444;
+    border-radius: 8px;
+    padding: 32px 16px;
+    text-align: center;
+    cursor: pointer;
+    background: #0f0f23;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.photo-dropzone:hover {
+    border-color: #DB8084;
+    background: #181830;
+}
+
+.photo-dropzone__icon {
+    font-size: 32px;
+    color: #DB8084;
+    margin-bottom: 8px;
+}
+
+.photo-dropzone__title {
+    font-size: 13px;
+    color: #e0e0e0;
+    font-weight: 600;
+}
+
+.photo-dropzone__hint {
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+}
+
+#photo-preview-wrap {
+    padding: 0 20px;
+}
+
+.photo-preview-frame {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #0f0f23;
+    margin-bottom: 10px;
+}
+
+.photo-preview-frame img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+.photo-preview-filename {
+    font-size: 11px;
+    color: #888;
+    text-align: center;
+    margin-bottom: 12px;
+    word-break: break-all;
+}
+
+.photo-preview-filename code {
+    background: transparent;
+    color: #888;
+    padding: 0;
+    font-size: 11px;
+}
+
+.photo-preview-actions {
+    display: flex;
+    gap: 6px;
+    padding: 0 0 16px;
+}
+
+.photo-preview-actions .btn {
+    flex: 1;
+}
+
+.photo-loading {
+    padding: 0 20px;
+    text-align: center;
+    color: #888;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.photo-error {
+    padding: 8px 12px;
+    margin: 10px 20px 0;
+    background: rgba(160, 72, 72, 0.15);
+    border-left: 3px solid #A04848;
+    color: #FFB5B5;
+    font-size: 12px;
+    border-radius: 4px;
 }

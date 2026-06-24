@@ -43,3 +43,29 @@ RewriteRule ^(br|en)/?(.*)$ page-router.php?lang=$1&slug=$2 [QSA,L]
 #    Útil pra URLs antigas e SEO. Comente se preferir 404 puro.
 # -----------------------------------------------------------
 RewriteRule ^(.+)$ /br/$1 [R=301,L]
+
+# ============================================================
+# 6. Limites de upload do PHP (Fase Receita C1.2 — step photos)
+# ============================================================
+# Permitem fotos de até 10 MB direto no admin/upload-image.php.
+# O endpoint ainda redimensiona pra max 1600px de largura.
+# Se o servidor não aceitar php_value (FastCGI/CGI), copiar estes
+# valores pra /admin/.user.ini sem o prefixo "php_value ".
+<IfModule mod_php.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 12M
+    php_value max_execution_time 60
+    php_value memory_limit 128M
+</IfModule>
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 12M
+    php_value max_execution_time 60
+    php_value memory_limit 128M
+</IfModule>
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 12M
+    php_value max_execution_time 60
+    php_value memory_limit 128M
+</IfModule>

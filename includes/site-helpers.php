@@ -125,8 +125,9 @@ function getCategory(string $slug, string $lang = KALLME_DEFAULT_LANG): ?array {
  * Lista categorias ativas, em ordem de exibição (schema bilíngue).
  *
  * Cada item recebe `name`/`description` localizados conforme $lang
- * (retrocompat). Use getCategoriesWithArticleCount() em includes/categories.php
- * quando precisar de contagem de artigos e disponibilidade.
+ * (retrocompat). Use getCategoriesWithContentCount() em includes/categories.php
+ * quando precisar de contagem de conteúdo (artigos + receitas + guia de
+ * pontos no crochê) e flags de disponibilidade.
  */
 function getAllCategories(string $lang = KALLME_DEFAULT_LANG): array {
     $pdo = getDB();
@@ -146,13 +147,18 @@ function getAllCategories(string $lang = KALLME_DEFAULT_LANG): array {
 }
 
 /**
- * Busca artigos/páginas publicadas com filtros opcionais.
+ * Busca conteúdo publicado com filtros opcionais.
+ *
+ * Por padrão, lista artigos + receitas (page_type IN ('article','recipe')).
+ * Páginas estáticas NÃO aparecem em listings — ficam acessíveis apenas
+ * por URL direta. Pra forçar um tipo único, passe `page_type` (string)
+ * ou múltiplos (array).
  *
  * Filtros aceitos (todos opcionais):
- *   - language    string  (ex: 'br')
- *   - category    string  (slug da categoria)
- *   - page_type   string  'article' | 'static'
- *   - limit       int     (LIMIT N)
+ *   - language    string         (ex: 'br')
+ *   - category    string         (slug da categoria)
+ *   - page_type   string|array   'article' | 'recipe' | ['article','recipe']
+ *   - limit       int            (LIMIT N)
  *
  * Ordena por data de publicação (publish_date OU created_at) desc.
  *
@@ -171,9 +177,19 @@ function getArticles(array $filters = []): array {
         $where[] = 'category = ?';
         $params[] = $filters['category'];
     }
-    if (!empty($filters['page_type'])) {
-        $where[] = 'page_type = ?';
-        $params[] = $filters['page_type'];
+
+    // page_type: default = ['article','recipe'] (estática nunca em listing).
+    // Aceita string única ou array.
+    $ptypeFilter = $filters['page_type'] ?? ['article', 'recipe'];
+    if (is_string($ptypeFilter) && $ptypeFilter !== '') {
+        $ptypeFilter = [$ptypeFilter];
+    }
+    if (is_array($ptypeFilter) && !empty($ptypeFilter)) {
+        $placeholders = implode(',', array_fill(0, count($ptypeFilter), '?'));
+        $where[] = "page_type IN ($placeholders)";
+        foreach ($ptypeFilter as $pt) {
+            $params[] = $pt;
+        }
     }
 
     $sql = "SELECT * FROM pages WHERE " . implode(' AND ', $where);

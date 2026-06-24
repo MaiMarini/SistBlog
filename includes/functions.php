@@ -118,14 +118,19 @@ function getAllPages(array $filters = []): array {
 function savePage(array $data, ?int $id = null): int|false {
     $pdo = getDB();
 
-    // Whitelist de colunas editoriais (presell removido).
-    // Reflete o schema atual da tabela `pages` (19 colunas).
+    // Whitelist de colunas editoriais + campos de receita (Fase B1).
+    // Reflete o schema atual da tabela `pages`.
     $fields = [
+        // Editorial / SEO
         'title', 'slug', 'content', 'status',
         'language', 'page_type', 'category',
         'excerpt', 'featured_image', 'reading_time',
         'author_name', 'publish_date', 'template',
         'meta_title', 'meta_description', 'tracking_code',
+        // Campos específicos de receita (page_type='recipe')
+        'difficulty', 'estimated_time', 'piece_type',
+        'final_size', 'yarn_recommended', 'hook_size',
+        'is_free',
     ];
 
     if ($id) {
@@ -192,15 +197,31 @@ function buildPageDataFromPost(array $post, array $files, array &$errors = []): 
         'content'          => $post['content'] ?? '',
         'status'           => in_array($post['status'] ?? 'draft', ['draft', 'published'], true) ? $post['status'] : 'draft',
         'language'         => in_array($post['language'] ?? 'br', ['br', 'en'], true) ? $post['language'] : 'br',
-        'page_type'        => in_array($post['page_type'] ?? 'static', ['article', 'static'], true) ? $post['page_type'] : 'static',
+        'page_type'        => in_array($post['page_type'] ?? 'article', ['article', 'recipe', 'static'], true) ? $post['page_type'] : 'article',
         'category'         => !empty($post['category']) ? trim($post['category']) : null,
         'excerpt'          => trim($post['excerpt'] ?? ''),
         'author_name'      => trim($post['author_name'] ?? '') ?: null,
-        'publish_date'     => !empty($post['publish_date']) ? $post['publish_date'] : null,
+        // Auto-fill: se publicado e sem data → hoje. Rascunho sem data → NULL.
+        // Em edição, o form já vem pré-preenchido com o valor existente,
+        // então o rule preserva publish_date original quando já existe.
+        'publish_date'     => (function () use ($post) {
+            $given = trim((string) ($post['publish_date'] ?? ''));
+            if ($given !== '') return $given;
+            $status = $post['status'] ?? 'draft';
+            return $status === 'published' ? date('Y-m-d') : null;
+        })(),
         'template'         => !empty($post['template']) ? trim($post['template']) : null, // hero variant
         'meta_title'       => trim($post['meta_title'] ?? ''),
         'meta_description' => trim($post['meta_description'] ?? ''),
         'tracking_code'    => $post['tracking_code'] ?? '',
+        // Campos específicos de receita (coletados sempre; normalizados na seção de coerência abaixo)
+        'difficulty'       => !empty($post['difficulty']) ? trim($post['difficulty']) : null,
+        'estimated_time'   => !empty($post['estimated_time']) ? trim($post['estimated_time']) : null,
+        'piece_type'       => !empty($post['piece_type']) ? trim($post['piece_type']) : null,
+        'final_size'       => !empty($post['final_size']) ? trim($post['final_size']) : null,
+        'yarn_recommended' => !empty($post['yarn_recommended']) ? trim($post['yarn_recommended']) : null,
+        'hook_size'        => !empty($post['hook_size']) ? trim($post['hook_size']) : null,
+        'is_free'          => !empty($post['is_free']) ? 1 : 0,
     ];
 
     // Slug obrigatório (auto-gera se vazio)
@@ -235,15 +256,56 @@ function buildPageDataFromPost(array $post, array $files, array &$errors = []): 
         $data['reading_time'] = null;
     }
 
-    // Coerência page_type ⇄ category:
-    //   - static: nunca tem categoria (zera silenciosamente se vier do POST)
-    //   - article: precisa de categoria (erro de validação se faltar)
-    if ($data['page_type'] === 'static') {
+    // ============================================================
+    // Coerência por page_type — zera/exige campos conforme o tipo
+    // ============================================================
+    $pageType = $data['page_type'];
+
+    // Limpa campos de receita por padrão; só preserva no branch de receita
+    $clearRecipeFields = function (array &$data) {
+        $data['difficulty']       = null;
+        $data['estimated_time']   = null;
+        $data['piece_type']       = null;
+        $data['final_size']       = null;
+        $data['yarn_recommended'] = null;
+        $data['hook_size']        = null;
+        $data['is_free']          = null;
+    };
+
+    if ($pageType === 'static') {
+        // Estática: zera categoria, template e tudo de receita
         $data['category'] = null;
-    } else {
+        $data['template'] = null;
+        $clearRecipeFields($data);
+
+    } elseif ($pageType === 'article') {
+        // Artigo: precisa categoria + valida hero (allowlist com fallback)
         if (empty($data['category'])) {
             $errors[] = 'Artigos precisam de categoria. Selecione uma categoria ou marque como Estática.';
         }
+        $allowedHeros = ['hero-classic', 'hero-side', 'hero-minimal'];
+        $template = $data['template'] ?? 'hero-classic';
+        $data['template'] = in_array($template, $allowedHeros, true) ? $template : 'hero-classic';
+        $clearRecipeFields($data);
+
+    } elseif ($pageType === 'recipe') {
+        // Receita: precisa categoria, NÃO usa hero (template=null), valida ENUMs
+        if (empty($data['category'])) {
+            $errors[] = 'Receitas precisam de categoria.';
+        }
+        $data['template'] = null;
+
+        $allowedDifficulties = ['beginner', 'intermediate', 'advanced'];
+        if (empty($data['difficulty']) || !in_array($data['difficulty'], $allowedDifficulties, true)) {
+            $errors[] = 'Receitas precisam de dificuldade (Iniciante / Intermediário / Avançado).';
+            $data['difficulty'] = null;
+        }
+
+        $allowedPieceTypes = ['amigurumi', 'wearable', 'decor', 'accessory', 'other'];
+        if (!empty($data['piece_type']) && !in_array($data['piece_type'], $allowedPieceTypes, true)) {
+            $data['piece_type'] = null;
+        }
+        // is_free já foi normalizado pra 0/1 acima; preserva
     }
 
     return $data;
@@ -259,4 +321,102 @@ function getTemplates(): array {
         'hero-side'    => 'Hero lateral',
         'hero-minimal' => 'Hero minimalista',
     ];
+}
+
+/**
+ * Busca um artigo publicado por slug + idioma + categoria.
+ * Diferente de getPage() porque exige page_type = 'article' explicitamente.
+ */
+function findArticle(string $slug, string $language, string $category): ?array {
+    $pdo = getDB();
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM pages
+        WHERE slug = ?
+          AND language = ?
+          AND category = ?
+          AND page_type = 'article'
+          AND status = 'published'
+        LIMIT 1
+    ");
+    $stmt->execute([$slug, $language, $category]);
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
+/**
+ * Lista conteúdo publicado de uma categoria (artigos + receitas),
+ * do mais novo pro mais antigo. Ordena por publish_date (cai pra created_at se NULL).
+ *
+ * Inclui campos extras de receita (page_type, difficulty, estimated_time, is_free)
+ * pra o template renderizar selos diferenciados sem precisar de query extra.
+ *
+ * @param string $categorySlug Slug da categoria.
+ * @param string $language     Idioma ('br'|'en').
+ * @param int    $limit        0 = sem limite.
+ * @param int    $offset       Offset pra paginação (default 0).
+ */
+function getCategoryContent(string $categorySlug, string $language, int $limit = 0, int $offset = 0): array {
+    $pdo = getDB();
+
+    $sql = "
+        SELECT id, title, slug, excerpt, featured_image,
+               reading_time, publish_date, created_at, author_name,
+               page_type, difficulty, estimated_time, is_free
+        FROM pages
+        WHERE category = ?
+          AND language = ?
+          AND page_type IN ('article', 'recipe')
+          AND status = 'published'
+        ORDER BY COALESCE(publish_date, created_at) DESC, id DESC
+    ";
+
+    if ($limit > 0) {
+        $sql .= " LIMIT " . (int) $limit;
+        if ($offset > 0) {
+            $sql .= " OFFSET " . (int) $offset;
+        }
+    }
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$categorySlug, $language]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Alias de getCategoryContent() — mantido pra compatibilidade com chamadas
+ * anteriores que esperavam apenas artigos. Hoje devolve artigos + receitas.
+ *
+ * @deprecated Use getCategoryContent() diretamente.
+ */
+function getCategoryArticles(string $categorySlug, string $language, int $limit = 0, int $offset = 0): array {
+    return getCategoryContent($categorySlug, $language, $limit, $offset);
+}
+
+/**
+ * Busca conteúdo relacionado da mesma categoria (excluindo o atual),
+ * ordenados pela data de publicação (cai pra created_at se publish_date for NULL).
+ *
+ * Retorna artigos + receitas — quem está lendo um artigo de crochê deve
+ * ver receitas relacionadas da mesma categoria, e vice-versa.
+ */
+function getRelatedArticles(int $excludeId, string $category, string $language, int $limit = 3): array {
+    $pdo = getDB();
+    $stmt = $pdo->prepare("
+        SELECT id, title, slug, excerpt, featured_image, reading_time, publish_date, created_at,
+               page_type, difficulty, estimated_time, is_free
+        FROM pages
+        WHERE category = ?
+          AND language = ?
+          AND page_type IN ('article', 'recipe')
+          AND status = 'published'
+          AND id != ?
+        ORDER BY COALESCE(publish_date, created_at) DESC
+        LIMIT ?
+    ");
+    $stmt->bindValue(1, $category);
+    $stmt->bindValue(2, $language);
+    $stmt->bindValue(3, $excludeId, PDO::PARAM_INT);
+    $stmt->bindValue(4, $limit, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

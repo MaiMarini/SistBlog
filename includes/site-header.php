@@ -83,6 +83,10 @@ $activeNav = $activeNav ?? '';
 
     <!-- Site stylesheet -->
     <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/site.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/article.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/category.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/recipe.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/stitch-guide.css">
 
     <!-- Favicon (arquivos na raiz do site) -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -113,24 +117,24 @@ $activeNav = $activeNav ?? '';
 <header class="site-header">
     <div class="container container-wide site-header__inner">
 
-        <!-- ZONA ESQUERDA: botão hambúrguer (abre drawer) -->
-        <button class="header-menu-btn" id="drawerOpen" type="button"
-                aria-label="Abrir menu" aria-controls="drawer">
-            <i class="ph ph-list icon-md"></i>
-        </button>
+        <!-- ZONA ESQUERDA: hambúrguer + brand (brand some na home) -->
+        <div class="header-left">
+            <button class="header-menu-btn" id="drawerOpen" type="button"
+                    aria-label="Abrir menu" aria-controls="drawer">
+                <i class="ph ph-list icon-md"></i>
+            </button>
 
-        <!-- ZONA CENTRO: navegação inline.
-             Em páginas que não são a home, o "Kallme" pequeno aparece entre os links. -->
+            <?php if (($activeNav ?? '') !== 'home'): ?>
+                <a href="<?= e(url('', $lang)) ?>" class="header-brand"><?= e($siteName) ?></a>
+            <?php endif; ?>
+        </div>
+
+        <!-- ZONA CENTRO: navegação limpa (Home · Sobre · Contato) -->
         <nav class="site-nav" aria-label="Menu principal">
             <a href="<?= e(url('', $lang)) ?>"
                class="<?= $activeNav === 'home' ? 'is-active' : '' ?>">
                 <?= $lang === 'en' ? 'Home' : 'Home' ?>
             </a>
-
-            <?php if (($activeNav ?? '') !== 'home'): ?>
-                <a href="<?= e(url('', $lang)) ?>" class="site-nav__brand"><?= e($siteName) ?></a>
-            <?php endif; ?>
-
             <a href="<?= e(url($lang === 'en' ? 'about' : 'sobre', $lang)) ?>"
                class="<?= $activeNav === 'sobre' ? 'is-active' : '' ?>">
                 <?= $lang === 'en' ? 'About' : 'Sobre' ?>

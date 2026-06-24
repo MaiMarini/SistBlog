@@ -1,0 +1,209 @@
+/* ============================================================
+   KALLME — STITCH-GUIDE.CSS (R-A2)
+   Página /br/croche/guia-de-pontos — referência pública dos pontos.
+   Container PRÓPRIO de 1500px (independente do site.css).
+   ============================================================ */
+
+.stitch-guide-page {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 60px 20px 0;
+}
+
+/* HEADER ====================================================== */
+
+.stitch-guide__header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 0 20px;
+}
+
+.stitch-guide__breadcrumb {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+}
+
+.stitch-guide__breadcrumb a {
+    color: var(--color-cta);
+    text-decoration: none;
+}
+
+.stitch-guide__breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.stitch-guide__title {
+    font-family: var(--font-display);
+    font-size: 48px;
+    color: var(--color-primary-dark);
+    margin: 0 0 16px;
+    line-height: 1.1;
+    font-weight: 700;
+}
+
+.stitch-guide__subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--color-text-secondary);
+    font-size: 20px;
+    line-height: 1.5;
+    margin: 0 0 20px;
+}
+
+.stitch-guide__count {
+    display: inline-block;
+    background: var(--color-bg-card);
+    color: var(--color-cta);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+/* GRID 2 COLUNAS ============================================== */
+
+.stitch-guide__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 32px;
+    row-gap: 32px;
+}
+
+@media (max-width: 800px) {
+    .stitch-guide__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* CARD DO PONTO =============================================== */
+
+.stitch-item {
+    background: var(--color-bg-white);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    border: 1px solid var(--color-border-light);
+    scroll-margin-top: 24px;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.stitch-item__header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--color-accent);
+    flex-shrink: 0;
+}
+
+.stitch-item__name {
+    font-family: var(--font-body);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--color-accent);
+    margin: 0;
+    flex: 1;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.stitch-item__abbr {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 13px;
+    color: var(--color-cta);
+    background: rgba(208, 59, 71, 0.08);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+}
+
+/* Body com float-right pra foto: o texto envolve naturalmente, e a foto
+   preserva proporção real (sem corte, sem placeholder cinza). */
+.stitch-item__body {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-text-primary);
+    flex: 1;
+}
+
+/* Clearfix: garante que o container do card encerra abaixo do float */
+.stitch-item__body::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+/* .stitch-item__desc: sem regras próprias — flui dentro do body */
+
+.stitch-item__photo {
+    float: right;
+    width: 240px;
+    margin: 0 0 12px 20px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.stitch-item__photo img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Mobile: foto full-width acima do texto (sem float) */
+@media (max-width: 600px) {
+    .stitch-item__photo {
+        float: none;
+        width: 100%;
+        margin: 0 0 16px 0;
+    }
+}
+
+/* Highlight quando acessado via anchor (#corrente, #ponto-baixo...) */
+.stitch-item:target {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(219, 128, 132, 0.15);
+}
+
+/* FOOTER ====================================================== */
+
+.stitch-guide__footer {
+    margin: 60px auto 80px;
+    padding: 40px 20px 0;
+    text-align: center;
+    border-top: 1px solid var(--color-border-light);
+}
+
+.stitch-guide__footer p {
+    color: var(--color-text-secondary);
+    font-style: italic;
+    font-size: 14px;
+    margin: 0;
+}
+
+.stitch-guide__back {
+    display: inline-block;
+    margin-top: 14px;
+    color: var(--color-cta);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.stitch-guide__back:hover {
+    color: var(--color-primary-dark);
+}
+
+@media (max-width: 768px) {
+    .stitch-guide__title { font-size: 36px; }
+    .stitch-guide__subtitle { font-size: 18px; }
+}

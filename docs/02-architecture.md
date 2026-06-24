@@ -230,7 +230,7 @@ CREATE TABLE settings (
 | `url($path, $lang)` | Constrói URL relativa com prefixo de idioma |
 | `getCategory($slug, $lang)` | Categoria + alias `name`/`description` localizado |
 | `getAllCategories($lang)` | Lista ativa, ordenada por display_order |
-| `getArticles($filters)` | Páginas publicadas com filtros (language, category, page_type, limit) |
+| `getArticles($filters)` | Conteúdo publicado (artigos + receitas por padrão; estáticas nunca aparecem). `page_type` aceita string ou array; default = `['article','recipe']`. Filtros extras: `language`, `category`, `limit` |
 | `getArticleExcerpt($page, $maxLen)` | excerpt → subtitle → meta_description → content strip |
 | `getCoverImage($page)` | featured_image → main_image → header_image → content1_image → content2[0] → placeholder |
 | `formatDate($date, $lang)` | BR: "25 de maio de 2026" \| EN: "May 25, 2026" |
@@ -241,8 +241,9 @@ CREATE TABLE settings (
 
 | Função | O que faz |
 |--------|-----------|
-| `getCategoriesWithArticleCount()` | Categorias + contagem por idioma + flags `is_available_br/en`, com **cache 1h** |
-| `clearCategoriesCache()` | Invalida o cache (chamado no admin ao salvar/excluir) |
+| `getCategoriesWithContentCount()` | Categorias + contagem por idioma (artigos + receitas) + detecção do guia de pontos (crochê) + flags `is_available_br/en`, com **cache 1h** |
+| `getCategoriesWithArticleCount()` | Alias deprecated de `getCategoriesWithContentCount()` (retrocompat) |
+| `clearCategoriesCache()` | Invalida o cache (chamado no admin ao salvar/excluir página, categoria ou ponto de crochê) |
 | `getCategoryBySlug($slug)` | Atalho do cache |
 | `renderCategoryIcon($cat, $extraClass)` | HTML do ícone (phosphor classe ou svg inline/arquivo) |
 

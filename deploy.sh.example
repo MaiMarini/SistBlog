@@ -12,52 +12,79 @@
 #
 # Rodar:
 #   bash deploy.sh
+#
+# Auto-discovery: faz `find` por extensão + dotfiles relevantes, depois
+# remove o que está em EXCLUDE_FILES / PRUNE_DIRS. Pra excluir um arquivo
+# novo, basta adicionar nas listas abaixo — sem mexer no resto.
 
 DEPLOY_URL="http://SEU_DOMINIO.com/install.php"
 DEPLOY_KEY="DEFINA_UMA_CHAVE_SECRETA_AQUI"
 LOCAL_DIR="/caminho/absoluto/para/o/projeto"
 
-echo "🚀 Iniciando deploy..."
-cd "$LOCAL_DIR"
+# ------------------------------------------------------------------
+# CONFIGURAÇÃO DO DESCOBRIDOR
+# ------------------------------------------------------------------
 
-# Lista de arquivos a enviar (manualmente — adicione novos arquivos aqui)
-FILES=(
-    ".htaccess"
-    "index.php"
-    "page.php"
-    "page-router.php"
-    "migrate.php"
-    "site.webmanifest"
-    "config/database.php"
-    "includes/auth.php"
-    "includes/functions.php"
-    "includes/settings.php"
-    "includes/categories.php"
-    "includes/site-helpers.php"
-    "includes/site-header.php"
-    "includes/site-footer.php"
-    "includes/site-drawer.php"
-    "admin/index.php"
-    "admin/login.php"
-    "admin/logout.php"
-    "admin/pages.php"
-    "admin/page-form.php"
-    "admin/page-delete.php"
-    "admin/preview.php"
-    "admin/settings.php"
-    "admin/includes/sidebar.php"
-    "admin/assets/admin.css"
-    "admin/assets/admin.js"
-    "assets/css/site.css"
-    "assets/js/header.js"
-    "pages/br/home.php"
-    "pages/br/sobre.php"
-    "pages/br/contato.php"
-    "pages/br/politica-de-privacidade.php"
-    "pages/br/termos.php"
-    "pages/br/divulgacao-afiliados.php"
-    "pages/br/404.php"
+# Diretórios completamente ignorados (estrutura local, gitignored, ou
+# conteúdo gerenciado direto no servidor via cPanel).
+PRUNE_DIRS=(
+    ".git" ".vscode" ".claude" ".idea"
+    "node_modules" "vendor"
+    "uploads"     # gerenciado pelo admin
+    "docs"        # documentação local
+    "assets/img"  # SVGs/JPGs subidos via cPanel (não via deploy)
 )
+
+# Arquivos específicos a NUNCA enviar, mesmo que batam com o whitelist
+# de extensões. Cada entrada é um path EXATO relativo ao projeto.
+EXCLUDE_FILES=(
+    "install.php"                  # server tem versão própria (receiver de upload)
+    "config/database.example.php"  # template local, não vai pra prod
+    "deploy.sh"                    # este próprio script
+    "deploy.sh.example"            # template do deploy
+)
+
+# ------------------------------------------------------------------
+# DESCOBERTA
+# ------------------------------------------------------------------
+
+echo "🚀 Iniciando deploy para $DEPLOY_URL"
+cd "$LOCAL_DIR" || { echo "❌ LOCAL_DIR inválido: $LOCAL_DIR"; exit 1; }
+
+# Monta os args de prune do find
+PRUNE_ARGS=()
+for d in "${PRUNE_DIRS[@]}"; do
+    PRUNE_ARGS+=( -path "./$d" -prune -o )
+done
+
+# find: prune dirs + pega só os tipos relevantes
+mapfile -t ALL_FILES < <(
+    find . "${PRUNE_ARGS[@]}" -type f \( \
+        -name "*.php" -o \
+        -name "*.css" -o \
+        -name "*.js"  -o \
+        -name "*.webmanifest" -o \
+        -name ".htaccess" -o \
+        -name ".user.ini" \
+    \) -print 2>/dev/null | sed 's|^\./||' | sort
+)
+
+# Filtra exclusões pontuais
+FILES=()
+for f in "${ALL_FILES[@]}"; do
+    skip=0
+    for ex in "${EXCLUDE_FILES[@]}"; do
+        if [[ "$f" == "$ex" ]]; then skip=1; break; fi
+    done
+    [[ $skip -eq 0 ]] && FILES+=("$f")
+done
+
+echo "📋 ${#FILES[@]} arquivo(s) descoberto(s)"
+echo
+
+# ------------------------------------------------------------------
+# UPLOAD
+# ------------------------------------------------------------------
 
 ERRORS=0
 for file in "${FILES[@]}"; do
@@ -70,8 +97,9 @@ for file in "${FILES[@]}"; do
     fi
 done
 
+echo
 if [ $ERRORS -eq 0 ]; then
-    echo "✅ Deploy concluído com sucesso! ($((${#FILES[@]})) arquivos)"
+    echo "✅ Deploy concluído com sucesso! (${#FILES[@]} arquivos)"
 else
-    echo "⚠️ Deploy concluído com $ERRORS erro(s)"
+    echo "⚠️  Deploy concluído com $ERRORS erro(s) de ${#FILES[@]} arquivo(s)"
 fi

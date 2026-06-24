@@ -46,7 +46,15 @@ if ($slug === '') {
     exit;
 }
 
-// ---------- 4. Categoria + Artigo (slug com '/') ----------
+// ---------- 4. Rotas especiais (antes da regra de cat/slug) ----------
+// Guia de pontos do crochê — página estática gerada do banco crochet_stitches.
+// Por enquanto só em PT; quando houver versão EN, expande aqui.
+if ($lang === 'br' && $slug === 'croche/guia-de-pontos') {
+    require __DIR__ . '/templates/stitch-guide.php';
+    exit;
+}
+
+// ---------- 4b. Categoria + Artigo (slug com '/') ----------
 if (strpos($slug, '/') !== false) {
     [$categorySlug, $articleSlug] = explode('/', $slug, 2);
 
@@ -86,9 +94,18 @@ if (file_exists($staticFile)) {
 // 5b. É uma categoria? (mostra listagem de artigos dessa categoria)
 $category = getCategory($slug, $lang);
 if ($category) {
+    // Prioridade: templates/category.php (template oficial bilíngue).
+    // Fallback: pages/<lang>/_category.php se algum dia criar versão por-idioma.
+    // Último recurso: placeholder neutro.
+    $categoryTemplate = __DIR__ . '/templates/category.php';
+    if (file_exists($categoryTemplate)) {
+        // $category e $lang ficam disponíveis dentro do template
+        require $categoryTemplate;
+        exit;
+    }
+
     $categoryListFile = __DIR__ . "/pages/{$lang}/_category.php";
     if (file_exists($categoryListFile)) {
-        // O arquivo _category.php tem acesso a $category e $lang
         $categoryArticles = getArticles([
             'language' => $lang,
             'category' => $category['slug'],
@@ -127,7 +144,8 @@ exit;
  * Renderiza uma página vinda do banco usando o template apropriado.
  *
  *   page_type = 'article' → templates/article.php (sistema de blocos modulares)
- *   page_type = 'static'  → templates/static.php
+ *   page_type = 'static'  → templates/static.php (TODO — ainda não existe)
+ *   page_type = 'recipe'  → templates/recipe.php (Fase Receita B3)
  *
  * Se o arquivo de template ainda não existir (sistema editorial em
  * construção), mostra um placeholder neutro em vez de quebrar.
@@ -144,7 +162,11 @@ function renderDbPage(array $page, string $lang, ?array $category): void {
 
     // Resolve o template a partir de page_type
     $pageType = $page['page_type'] ?? 'static';
-    $templateName = $pageType === 'article' ? 'article' : 'static';
+    $templateName = match ($pageType) {
+        'article' => 'article',
+        'recipe'  => 'recipe',
+        default   => 'static',
+    };
 
     $templateFile = __DIR__ . '/templates/' . $templateName . '.php';
     if (!file_exists($templateFile)) {

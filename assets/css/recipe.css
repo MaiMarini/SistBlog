@@ -1,0 +1,917 @@
+/* ============================================================
+   KALLME — RECIPE.CSS
+   Estilo do template templates/recipe.php (Fase Receita B3)
+   Depende das CSS variables do site.css (Sereno Romântico)
+   ============================================================ */
+
+.recipe-page {
+    background: var(--color-bg-primary);
+    min-height: 100vh;
+}
+
+/* ============================================================
+   HEADER CENTRALIZADO (selos + título + excerpt + meta)
+   ============================================================ */
+.recipe-header {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 70px 24px 40px;
+    text-align: center;
+}
+
+.recipe-header__pills {
+    display: inline-flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.pill-difficulty {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.pill-difficulty i {
+    font-size: 18px;
+}
+
+.pill-free {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--color-bg-card);
+    color: var(--color-cta);
+}
+
+.pill-free i {
+    font-size: 14px;
+}
+
+/* Receita paga — discreto, cinza-azulado (contrasta com a pill-free rosa) */
+.pill-paid {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(126, 138, 160, 0.12);
+    color: var(--color-text-secondary);
+}
+
+.pill-paid i {
+    font-size: 14px;
+}
+
+.recipe-header__title {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    line-height: 1.15;
+    margin-bottom: 16px;
+}
+
+.recipe-header__subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 20px;
+    color: var(--color-text-secondary);
+    margin: 0 auto 32px;
+    max-width: 600px;
+    line-height: 1.5;
+}
+
+.recipe-header__meta {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 20px 0;
+    border-top: 1px solid var(--color-border-light);
+    border-bottom: 1px solid var(--color-border-light);
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    flex-wrap: wrap;
+}
+
+.recipe-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.recipe-meta-item i {
+    color: var(--color-accent);
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .recipe-header { padding: 50px 20px 30px; }
+    .recipe-header__title { font-size: 36px; }
+    .recipe-header__subtitle { font-size: 18px; }
+    .recipe-header__meta { gap: 16px; }
+}
+
+/* ============================================================
+   FOTO + MATERIAIS LADO A LADO (alturas iguais)
+   ============================================================ */
+.recipe-hero-row {
+    max-width: 1100px;
+    margin: 50px auto 30px;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: stretch;
+}
+
+@media (max-width: 800px) {
+    .recipe-hero-row {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+.recipe-photo {
+    background: linear-gradient(135deg, #F5C0C0 0%, #E8A87C 100%);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    min-height: 400px;
+    box-shadow: 0 8px 24px rgba(35, 49, 74, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.recipe-photo__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.recipe-photo__placeholder {
+    font-size: 80px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 800px) {
+    .recipe-photo {
+        min-height: 350px;
+        aspect-ratio: 4 / 3;
+    }
+}
+
+/* Materiais */
+.materials-box {
+    background: var(--color-bg-white);
+    border-radius: var(--radius-lg);
+    padding: 28px 30px;
+    border: 1px solid var(--color-border-light);
+}
+
+.materials-box h3 {
+    font-family: var(--font-body);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-transform: none;
+    letter-spacing: 0;
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--color-accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.materials-box h3 i {
+    color: var(--color-accent);
+    font-size: 20px;
+}
+
+.materials-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.materials-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-border-light);
+    font-size: 14px;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: start;
+    gap: 10px;
+    line-height: 1.5;
+}
+
+.materials-list li:last-child {
+    border-bottom: none;
+}
+
+.materials-list li::before {
+    content: '🌷';
+    flex-shrink: 0;
+}
+
+.materials-empty {
+    color: var(--color-text-secondary);
+    font-style: italic;
+    margin: 0;
+}
+
+/* ============================================================
+   STITCH GUIDE — grid de pontos da receita
+   ============================================================ */
+.stitch-guide-section {
+    max-width: 1100px;
+    margin: 30px auto 0;
+    padding: 0 24px;
+}
+
+.stitch-guide-section__inner {
+    background: var(--color-bg-white);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    border: 1px solid var(--color-border-light);
+}
+
+.stitch-guide-section h3 {
+    font-family: var(--font-body);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-transform: none;
+    letter-spacing: 0;
+    margin: 0 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--color-accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    text-align: center;
+}
+
+.stitch-guide-section h3 i {
+    color: var(--color-accent);
+    font-size: 20px;
+}
+
+.stitches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+}
+
+.stitch-card-mini {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px 12px;
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.stitch-card-mini:hover {
+    background: var(--color-bg-card);
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+}
+
+.stitch-card-mini__icon {
+    width: 48px;
+    height: 48px;
+    color: var(--color-cta);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stitch-card-mini__icon svg,
+.stitch-card-mini__icon .stitch-icon-svg,
+.stitch-card-mini__icon img {
+    width: 100%;
+    height: 100%;
+}
+
+.stitch-card-mini__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    line-height: 1.3;
+    margin-bottom: 3px;
+}
+
+.stitch-card-mini__abbrev {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    font-family: monospace;
+}
+
+/* ============================================================
+   CORPO DA RECEITA (TinyMCE)
+   ============================================================ */
+.recipe-body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.floral-divider {
+    border: 0;
+    height: 1px;
+    background: var(--color-border-light);
+    margin: 50px auto;
+    max-width: 200px;
+    position: relative;
+}
+
+.floral-divider::before {
+    content: '❀';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-bg-primary);
+    padding: 0 12px;
+    color: var(--color-accent);
+    font-size: 16px;
+}
+
+.recipe-body__title {
+    font-family: var(--font-body);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-align: center;
+    margin: 0 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.recipe-body__title i {
+    color: var(--color-accent);
+    font-size: 26px;
+}
+
+.recipe-body__content {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--color-text-primary);
+}
+
+.recipe-body__content h2 {
+    font-family: var(--font-body);
+    font-size: 22px;
+    font-weight: 700;
+    margin: 40px 0 16px;
+    color: var(--color-primary-dark);
+}
+
+.recipe-body__content h3 {
+    font-family: var(--font-body);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 28px 0 12px;
+    color: var(--color-primary-dark);
+}
+
+.recipe-body__content p {
+    margin-bottom: 16px;
+}
+
+.recipe-body__content strong {
+    color: var(--color-cta);
+}
+
+.recipe-body__content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    margin: 20px 0;
+}
+
+/* ============================================================
+   BLOCOS EDITORIAIS DE RECEITA — público
+   (passos da receita + tips/alerts/important + colors + gallery)
+   ============================================================ */
+
+/* Container padrão dos blocos (tips/colors/gallery continuam em 720) */
+.recipe-blocks {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Título base dos blocos: Inter / 600 / sem uppercase / accent rosa.
+   Substituído em rodada de coesão (Fase R-C1.3) — antes era Playfair maiúsculo. */
+.recipe-blocks__title {
+    font-family: var(--font-body);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-align: center;
+    text-transform: none;
+    letter-spacing: 0;
+    margin: 50px 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.recipe-blocks__title i {
+    color: var(--color-accent);
+    font-size: 26px;
+}
+
+/* ============================================================
+   PASSOS DA RECEITA — layout 2 colunas, 1300px max
+   ============================================================ */
+.recipe-blocks--steps {
+    max-width: 1300px;
+    margin: 50px auto 0;
+    padding: 0 24px;
+}
+
+.recipe-blocks--steps .recipe-blocks__title {
+    font-size: 32px;
+    margin: 40px 0 48px;
+}
+
+.recipe-blocks--steps .recipe-blocks__title i {
+    font-size: 32px;
+}
+
+/* Grid de 2 colunas pras seções */
+.step-sections-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 48px;
+    row-gap: 72px;
+}
+
+@media (max-width: 800px) {
+    .step-sections-grid {
+        grid-template-columns: 1fr;
+        row-gap: 48px;
+    }
+}
+
+/* Cada seção */
+.step-section {
+    position: relative;
+}
+
+/* Cabeçalho: número + título lado a lado, linha vermelha abaixo de tudo */
+.step-section__title-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--color-accent);
+}
+
+.step-section__number {
+    font-family: var(--font-body);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.step-section__title {
+    font-family: var(--font-body);
+    font-size: 22px;
+    color: var(--color-accent);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+    border: none;
+    flex: 1;
+}
+
+/* Body: texto à esquerda + foto à direita (foto começa abaixo do título).
+   align-items: start pra foto não esticar quando o texto for mais alto —
+   a foto fica no topo, mantém proporção natural. */
+.step-section__body {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 28px;
+    align-items: start;
+}
+
+.step-section--no-photo .step-section__body {
+    grid-template-columns: 1fr;
+}
+
+@media (max-width: 800px) {
+    .step-section__body {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Texto (tabela de linhas) */
+.step-section__main {
+    display: flex;
+    flex-direction: column;
+}
+
+.step-section__table {
+    display: flex;
+    flex-direction: column;
+}
+
+.step-line {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-border-light);
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--color-text-primary);
+}
+
+.step-line:last-child {
+    border-bottom: none;
+}
+
+.step-line--structured {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 10px;
+    align-items: baseline;
+}
+
+.step-line__row {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 14px;
+    color: var(--color-cta);
+    font-weight: 700;
+}
+
+.step-line__instruction {
+    color: var(--color-text-primary);
+    font-size: 15px;
+}
+
+.step-line__total {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+}
+
+.step-line--free {
+    color: var(--color-text-primary);
+    font-style: italic;
+    font-size: 15px;
+}
+
+@media (max-width: 600px) {
+    .step-line--structured {
+        grid-template-columns: 50px 1fr;
+        grid-template-rows: auto auto;
+    }
+    .step-line__total {
+        grid-column: 2;
+        grid-row: 2;
+        margin-top: 2px;
+    }
+}
+
+/* Foto — quadrada 280x280, com sombra */
+.step-section__photo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Frame da foto: largura fixa (280px via grid), altura segue a proporção
+   real da imagem — sem corte, sem espaço vazio, sem stretch. */
+.step-section__photo-wrap {
+    width: 100%;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(35, 49, 74, 0.1);
+}
+
+.step-section__photo-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.step-section__photo-caption {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-style: italic;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* --- Tips / Alerts / Important --- */
+.recipe-blocks--tips {
+    margin-top: 40px;
+}
+
+.tip-card {
+    display: flex;
+    gap: 14px;
+    padding: 18px 22px;
+    border-radius: var(--radius-md);
+    margin-bottom: 14px;
+    border-left: 4px solid;
+    align-items: flex-start;
+}
+
+.tip-card__icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.tip-card__body {
+    flex: 1;
+}
+
+.tip-card__label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.tip-card__text {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ============================================================
+   COLOR GUIDE — público
+   ============================================================ */
+.recipe-blocks--colors {
+    margin-top: 40px;
+}
+
+.color-guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.color-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    background: var(--color-bg-white);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+}
+
+.color-swatch {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--color-bg-white);
+    box-shadow: 0 2px 6px rgba(35, 49, 74, 0.1);
+    flex-shrink: 0;
+}
+
+.color-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.color-name {
+    font-size: 14px;
+    color: var(--color-primary-dark);
+    font-weight: 600;
+}
+
+.color-usage {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-style: italic;
+}
+
+/* ============================================================
+   STEP PHOTOS GALERIA — público
+   ============================================================ */
+.recipe-blocks--gallery {
+    margin-top: 40px;
+}
+
+.step-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+}
+
+.step-photo {
+    margin: 0;
+}
+
+.step-photo img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 12px rgba(35, 49, 74, 0.06);
+}
+
+.step-photo figcaption {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    text-align: center;
+    line-height: 1.4;
+}
+
+.step-photo__num {
+    color: var(--color-cta);
+    font-weight: 700;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    margin-right: 4px;
+}
+
+/* ============================================================
+   FOOTER DA RECEITA (CTA)
+   ============================================================ */
+.recipe-footer {
+    max-width: 720px;
+    margin: 60px auto 0;
+    padding: 30px 24px 80px;
+    text-align: center;
+}
+
+.recipe-footer__cta {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--color-text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.recipe-footer__cta i {
+    color: var(--color-cta);
+    font-size: 22px;
+}
+
+/* ============================================================
+   STITCH GUIDE INLINE — card destacado no meio da receita (R-C1.3)
+   ============================================================ */
+.recipe-blocks--stitch-inline {
+    max-width: 720px;
+    margin: 50px auto 0;
+    padding: 0 24px;
+}
+
+.stitch-card {
+    background: var(--color-bg-card);
+    border-left: 4px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 18px;
+    align-items: start;
+}
+
+.stitch-card__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-bg-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.stitch-card__name {
+    font-family: var(--font-body);
+    font-size: 17px;
+    color: var(--color-primary-dark);
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.stitch-card__abbr {
+    display: inline-block;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--color-cta);
+    background: rgba(208, 59, 71, 0.1);
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+}
+
+.stitch-card__desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.stitch-card__desc em {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    font-style: italic;
+}
+
+/* ============================================================
+   NOTAS / VARIAÇÕES — último card da receita (R-C1.3)
+   ============================================================ */
+.recipe-blocks--notes {
+    max-width: 720px;
+    margin: 50px auto 0;
+    padding: 0 24px;
+}
+
+.notes-card {
+    background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-card) 100%);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    border: 1px solid var(--color-border-light);
+}
+
+.notes-card__title {
+    font-family: var(--font-body);
+    font-size: 22px;
+    color: var(--color-accent);
+    font-weight: 600;
+    margin: 0 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--color-accent);
+}
+
+.notes-card__title i {
+    font-size: 22px;
+    color: var(--color-accent);
+}
+
+.notes-card__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notes-card__list li {
+    padding: 8px 0 8px 22px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--color-text-primary);
+}
+
+.notes-card__list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+}

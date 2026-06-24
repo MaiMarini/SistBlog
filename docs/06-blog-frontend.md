@@ -92,12 +92,12 @@ Menu lateral que desliza da esquerda ao clicar no hambúrguer.
 
 ### Lógica de "disponível vs em breve"
 
-Cada categoria é renderizada via `getCategoriesWithArticleCount()`. Para cada uma:
-- `is_available_br`: existe artigo publicado em BR nessa categoria?
+Cada categoria é renderizada via `getCategoriesWithContentCount()`. Para cada uma:
+- `is_available_br`: existe artigo, receita ou (no caso do crochê) guia de pontos disponível em BR?
 - Se sim → vira `<a href="/br/<slug>">` (link ativo)
 - Se não → vira `<span class="drawer__category-placeholder">` com tag "em breve"
 
-Por ora todas estão "em breve" (não há artigos publicados ainda).
+A categoria **crochê** ativa o link assim que houver ≥1 ponto cadastrado em `crochet_stitches` (flag `has_stitch_guide_br`), mesmo sem artigos/receitas publicados — o guia de pontos sozinho já é conteúdo suficiente.
 
 ### Largura
 
@@ -165,18 +165,20 @@ URL: **`kallme.online/br/`**
 
 > Para subir a imagem oficial: `/assets/img/hero-banner.jpg` ou `.webp`, proporção 16:9, ~1920×1080, < 300KB ([TinyPNG](https://tinypng.com)).
 
-### Grid de artigos
+### Grid de conteúdo (artigos + receitas)
 
-`getArticles(['language' => 'br', 'page_type' => 'article', 'limit' => 6])` busca os 6 mais recentes. Cada card:
+`getArticles(['language' => 'br', 'limit' => 6])` busca os 6 mais recentes. Sem filtro explícito de `page_type`, o helper devolve por padrão `IN ('article','recipe')` — estáticas nunca aparecem em listings. Cada card:
 
 - Cover image via `getCoverImage($article)` (featured_image → main → header → content1 → content2[0] → placeholder)
 - Badge com nome da categoria
 - Título (h3 Playfair 22px)
-- Meta: ícone clock + "X min de leitura · 25 de maio de 2026"
+- Meta: **micro-texto "ARTIGO" (lavanda #6B5E7E) ou "RECEITA" (sage #6B8552)** + ícone clock + tempo (de leitura pra artigo, `estimated_time` pra receita) + data formatada
 - Excerpt via `getArticleExcerpt`
-- Link "Ler artigo →"
+- CTA dinâmico: "Ler artigo →" para artigos, "Fazer receita →" para receitas
 
-Como não há artigos publicados ainda, o **empty state** ("Os primeiros artigos chegam em breve. 🌷") aparece num card rosa pétala.
+A diferenciação visual (`.meta-type--article` / `.meta-type--recipe`) está em [assets/css/site.css](assets/css/site.css).
+
+Como não há conteúdo publicado ainda, o **empty state** ("Os primeiros artigos chegam em breve. 🌷") aparece num card rosa pétala.
 
 ### Mini sobre
 

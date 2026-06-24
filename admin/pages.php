@@ -60,22 +60,26 @@ $activePage = 'pages';
                             <?php foreach ($pages as $page): ?>
                                 <?php
                                     // Monta a URL pública conforme tipo + idioma + categoria
+                                    $hasCatPrefix = in_array($page['page_type'], ['article', 'recipe'], true) && !empty($page['category']);
                                     $publicUrl = BASE_URL . $page['language'] . '/';
-                                    if ($page['page_type'] === 'article' && !empty($page['category'])) {
+                                    if ($hasCatPrefix) {
                                         $publicUrl .= $page['category'] . '/';
                                     }
                                     $publicUrl .= $page['slug'];
 
                                     // Caminho legível (igual ao publicUrl mas sem BASE_URL)
                                     $urlPath = '/' . $page['language'] . '/'
-                                             . (($page['page_type'] === 'article' && !empty($page['category']))
-                                                 ? $page['category'] . '/'
-                                                 : '')
+                                             . ($hasCatPrefix ? $page['category'] . '/' : '')
                                              . $page['slug'];
 
-                                    // Label do tipo (com categoria pra artigos)
-                                    $typeLabel = $page['page_type'] === 'article' ? '📝 Artigo' : '📄 Estática';
-                                    if ($page['page_type'] === 'article' && !empty($page['category'])) {
+                                    // Label do tipo (com categoria pra artigos/receitas)
+                                    $typeLabel = match ($page['page_type']) {
+                                        'article' => '📝 Artigo',
+                                        'recipe'  => '🧶 Receita',
+                                        'static'  => '📄 Estática',
+                                        default   => e($page['page_type']),
+                                    };
+                                    if (in_array($page['page_type'], ['article', 'recipe'], true) && !empty($page['category'])) {
                                         $catData = getCategoryBySlug($page['category']);
                                         if ($catData) {
                                             $typeLabel .= ' · ' . e($catData['name_br'] ?? $page['category']);

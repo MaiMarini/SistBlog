@@ -53,32 +53,38 @@ A intenção: hoje usamos Phosphor para todas, mas o suporte a SVG já está pro
 
 ## 🧑‍💻 Funções principais (`includes/categories.php`)
 
-### `getCategoriesWithArticleCount(): array`
+### `getCategoriesWithContentCount(): array`
 
 Retorna **todas as categorias ativas** com:
 - Todos os campos da tabela
-- `article_count_br`: contagem de artigos publicados em BR
-- `article_count_en`: idem para EN
-- `is_available_br`: bool — tem ao menos 1 artigo BR?
-- `is_available_en`: idem EN
+- `article_count_br` / `article_count_en` — artigos publicados por idioma
+- `recipe_count_br` / `recipe_count_en` — receitas publicadas por idioma
+- `has_stitch_guide_br` — `true` se a categoria for `croche` e houver ≥1 ponto ativo em `crochet_stitches` (o guia de pontos é exclusivo do crochê e do idioma BR)
+- `is_available_br` — `true` se houver artigo OU receita OU guia de pontos disponível em BR
+- `is_available_en` — `true` se houver artigo OU receita em EN
 
 Resultado é um array **keyed pelo slug**, ordenado por `display_order`.
 
 **Cache de 1 hora** em arquivo (`sys_get_temp_dir() . '/kallme_categories_cache.json'`).
 
 ```php
-$cats = getCategoriesWithArticleCount();
+$cats = getCategoriesWithContentCount();
 foreach ($cats as $slug => $cat) {
-    echo $cat['name_br'] . ': ' . $cat['article_count_br'] . " artigos\n";
+    $total = $cat['article_count_br'] + $cat['recipe_count_br'];
+    echo $cat['name_br'] . ": $total conteúdo(s)\n";
 }
 ```
 
+> O nome antigo `getCategoriesWithArticleCount()` continua funcionando como alias deprecated — chamadores legados não quebram, mas novos lugares devem usar `getCategoriesWithContentCount()`.
+
 ### `clearCategoriesCache(): void`
 
-Apaga o arquivo de cache. **Chamado automaticamente** quando uma página é salva ou excluída no admin:
+Apaga o arquivo de cache. **Chamado automaticamente** quando algum item relevante muda no admin:
 
-- `admin/page-form.php` — após `savePage()` bem-sucedido
+- `admin/page-form.php` — após `savePage()` bem-sucedido (artigos/receitas/estáticas)
 - `admin/page-delete.php` — após `deletePage()`
+- `admin/category-save.php` / `admin/category-delete.php` — CRUD de categorias
+- `admin/stitch-save.php` / `admin/stitch-delete.php` — CRUD de pontos de crochê (afeta `has_stitch_guide_br`)
 
 Você não precisa chamar manualmente. Para forçar limpeza: cPanel → Gerenciador de Arquivos → `/tmp/kallme_categories_cache.json` → deletar.
 
@@ -120,7 +126,7 @@ Usado em:
 
 Lista todas as categorias ativas, ordenadas, com `name`/`description` localizados.
 
-> Se você precisa **da contagem de artigos** e da flag `is_available`, use `getCategoriesWithArticleCount()` (cacheado) de `includes/categories.php`.
+> Se você precisa **da contagem de conteúdo** (artigos + receitas + guia de pontos no crochê) e da flag `is_available`, use `getCategoriesWithContentCount()` (cacheado) de `includes/categories.php`.
 
 ---
 
@@ -129,7 +135,7 @@ Lista todas as categorias ativas, ordenadas, com `name`/`description` localizado
 O drawer renderiza categorias com lógica **disponível vs em breve**:
 
 ```php
-$drawerCats = getCategoriesWithArticleCount();
+$drawerCats = getCategoriesWithContentCount();
 
 foreach ($drawerCats as $cat):
     $isAvailable = $lang === 'en' ? $cat['is_available_en'] : $cat['is_available_br'];

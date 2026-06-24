@@ -23,10 +23,11 @@ $activeNav = 'home';
 
 include __DIR__ . '/../../includes/site-header.php';
 
-// Últimos artigos publicados em BR
+// Últimos conteúdos publicados em BR (artigos + receitas, default do helper).
+// Estáticas (page_type='static') ficam fora porque getArticles() restringe
+// a IN ('article','recipe').
 $articles = getArticles([
     'language' => 'br',
-    'page_type' => 'article',
     'limit' => 6,
 ]);
 ?>
@@ -64,11 +65,15 @@ $articles = getArticles([
                             ? url($article['category'] . '/' . $article['slug'], $lang)
                             : url($article['slug'], $lang);
 
-                        // Resolve o nome da categoria para o badge
+                        // Resolve o nome + cores da categoria para o badge
                         $categoryName = '';
+                        $catBg = null;
+                        $catText = null;
                         if (!empty($article['category'])) {
                             $cat = getCategory($article['category'], $lang);
                             $categoryName = $cat['name'] ?? $article['category'];
+                            $catBg = $cat['color_bg'] ?? null;
+                            $catText = $cat['color_text'] ?? null;
                         }
 
                         // Tempo de leitura: usa o valor salvo, senão calcula on-the-fly
@@ -85,12 +90,29 @@ $articles = getArticles([
                                     class="card-article__image" loading="lazy">
                                 <div class="card-article__content">
                                     <?php if ($categoryName !== ''): ?>
-                                        <span class="card-article__badge"><?= e($categoryName) ?></span>
+                                        <?php
+                                            $badgeStyle = '';
+                                            if ($catBg)   $badgeStyle .= 'background:' . e($catBg) . ';';
+                                            if ($catText) $badgeStyle .= 'color:' . e($catText) . ';';
+                                        ?>
+                                        <span class="card-article__badge"<?= $badgeStyle ? ' style="' . $badgeStyle . '"' : '' ?>><?= e($categoryName) ?></span>
                                     <?php endif; ?>
                                     <h3 class="card-article__title"><?= e($article['title']) ?></h3>
+                                    <?php $pageType = $article['page_type'] ?? 'article'; ?>
                                     <p class="card-article__meta">
+                                        <?php if ($pageType === 'recipe'): ?>
+                                            <span class="meta-type meta-type--recipe">Receita</span>
+                                            <span class="separator">·</span>
+                                        <?php else: ?>
+                                            <span class="meta-type meta-type--article">Artigo</span>
+                                            <span class="separator">·</span>
+                                        <?php endif; ?>
                                         <i class="ph-light ph-clock icon-xs"></i>
-                                        <?= $readingTime ?> min de leitura
+                                        <?php if ($pageType === 'recipe' && !empty($article['estimated_time'])): ?>
+                                            <?= e($article['estimated_time']) ?>
+                                        <?php else: ?>
+                                            <?= $readingTime ?> min de leitura
+                                        <?php endif; ?>
                                         <span class="separator">·</span>
                                         <?= e(formatDate($publishDate, $lang)) ?>
                                     </p>
@@ -98,7 +120,7 @@ $articles = getArticles([
                                         <?= e(getArticleExcerpt($article)) ?>
                                     </p>
                                     <span class="card-article__link">
-                                        Ler artigo
+                                        <?= $pageType === 'recipe' ? 'Fazer receita' : 'Ler artigo' ?>
                                         <i class="ph-light ph-arrow-right icon-xs"></i>
                                     </span>
                                 </div>

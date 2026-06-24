@@ -64,7 +64,7 @@
         });
     }
 
-    // Botão de busca — placeholder até implementarmos a busca real
+    // Botão de busca — placeholder até implementar a busca real
     if (searchBtn) {
         searchBtn.addEventListener('click', function () {
             alert('Busca em breve. 🌷');
